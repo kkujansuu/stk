@@ -83,9 +83,7 @@ def list_uploads():
 def move_in_1(batch_name):
     """ Confirm Batch move to Isotammi database """
     user, batch_id, tstring, labels = Batch.get_batch_stats(batch_name)
-    total = 0
-    for _label, cnt in labels:
-        total += cnt
+    total = sum(cnt for _label, cnt in labels)
     # Not needed: logger.info(f' bp.audit.routes.move_in_1 {user} / {batch_name}, total {total} nodes')
 
     return render_template(
@@ -141,10 +139,7 @@ def delete_approved(batch_id):
 def audit_approvals(who=None):
     """ List Audit batches """
     t0 = time.time()
-    if who == "all":
-        auditor = None
-    else:
-        auditor = current_user.username
+    auditor = None if who == "all" else current_user.username
     titles, batches = Audit.get_auditor_stats(auditor)
     # {'matti/2020-01-03.001/13.01.2020 20:30': {'Note': 17, 'Place': 30, 'Repository': 3},
     #  'teppo/2020-01-03.002/23.01.2020 15:52': {...} ...}

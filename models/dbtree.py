@@ -150,9 +150,9 @@ class DbTree:
                 if node.bpointer in nl:
                     lv = nl[node.bpointer] + 1
                 else:
-                    lv = lv + 1
+                    lv += 1
                     nl[node.identifier] = lv
-                fill = "".join(["       " for _n in range(lv - 1)])
+                fill = "".join("       " for _n in range(lv - 1))
                 print(
                     "({}){} {:5d}<-{:5d} {} ".format(
                         lv, fill, node.bpointer, node.identifier, node.tag
@@ -162,10 +162,7 @@ class DbTree:
 
 if __name__ == "__main__":
     # Valinnainen argumentti: id of a place
-    if len(sys.argv) <= 1:
-        locid = 21773
-    else:
-        locid = int(sys.argv[1])
+    locid = 21773 if len(sys.argv) <= 1 else int(sys.argv[1])
     print("paikka {}".format(locid))
 
     # Connect db

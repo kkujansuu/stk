@@ -153,8 +153,10 @@ class DateRange:
             method, and the components formats are not checked.
         """
 
-        if len(args) == 0 or (
-            isinstance(args[0], (list, tuple)) and args[0][0] == None
+        if (
+            len(args) == 0
+            or isinstance(args[0], (list, tuple))
+            and args[0][0] is None
         ):
             # Missing date value, needed for comparisons
             self.datetype = DR["MISSING"]
@@ -176,7 +178,7 @@ class DateRange:
                 # (a.1) The only argument is a DataRange
                 self.datetype = args[0].datetype
                 self.date1 = self.DateInt(args[0].date1.intvalue)
-                if args[0].date2 == None:
+                if args[0].date2 is None:
                     self.date2 = None
                 else:
                     self.date2 = self.DateInt(args[0].date2.intvalue)
@@ -244,7 +246,7 @@ class DateRange:
             dopt = ""
 
         dstr1 = self.date1.to_local()
-        dstr2 = "" if self.date2 == None else self.date2.to_local()
+        dstr2 = "" if self.date2 is None else self.date2.to_local()
         # print ("# dstr {} - {}".format(dstr1, dstr2))
         if type_e == DR["DATE"]:  # Exact date d1
             return dopt + dstr1
@@ -285,7 +287,7 @@ class DateRange:
     """
 
     def __lt__(self, other):
-        if other == None or other.datetype == DR["MISSING"]:
+        if other is None or other.datetype == DR["MISSING"]:
             return False
         elif self.datetype == DR["MISSING"]:
             return True
@@ -294,7 +296,7 @@ class DateRange:
     def __le__(self, other):
         if self.datetype == DR["MISSING"]:
             return True
-        if other == None or other.datetype == DR["MISSING"]:
+        if other is None or other.datetype == DR["MISSING"]:
             return False
         return self.date1.intvalue <= other.date1.intvalue
 
@@ -304,7 +306,7 @@ class DateRange:
         return self.date1.intvalue == other.date1.intvalue
 
     def __ge__(self, other):
-        if other == None or other.datetype == DR["MISSING"]:
+        if other is None or other.datetype == DR["MISSING"]:
             return True
         if self.datetype == DR["MISSING"]:
             return False
@@ -313,7 +315,7 @@ class DateRange:
     def __gt__(self, other):
         if self.datetype == DR["MISSING"]:
             return False
-        if other == None or other.datetype == DR["MISSING"]:
+        if other is None or other.datetype == DR["MISSING"]:
             return True
         return self.date1.intvalue > other.date1.intvalue
 
@@ -368,19 +370,21 @@ class DateRange:
         """Returns a list [int, str, str] or [int, str]
         Example: [DR['BETWEEN'], "1917", "2017-10-16"]
         """
-        if self.date2 != None:
-            return [self.datetype, self.date1.short_date(), self.date2.short_date()]
-        else:
+        if self.date2 is None:
             return [self.datetype, self.date1.short_date()]
+
+        else:
+            return [self.datetype, self.date1.short_date(), self.date2.short_date()]
 
     def to_local(self):
         """Returns a list [int, str, str] or [int, str] for display
         Example: [DR['BETWEEN'], "1917", "16.10.2017"]
         """
-        if self.date2 != None:
-            return [self.datetype, self.date1.to_local(), self.date2.to_local()]
-        else:
+        if self.date2 is None:
             return [self.datetype, self.date1.to_local()]
+
+        else:
+            return [self.datetype, self.date1.to_local(), self.date2.to_local()]
 
     def for_db(self):
         """Returns a dictionary consisting of int datetype and
@@ -388,8 +392,7 @@ class DateRange:
         """
         v1 = self.date1.value()
         v2 = self.date2.value() if self.date2 != None else v1
-        ret = {"datetype": self.datetype, "date1": v1, "date2": v2}
-        return ret
+        return {"datetype": self.datetype, "date1": v1, "date2": v2}
 
     def add_years(self, intYears):
         """Calculate a new DateRange adding given number of years.
@@ -469,7 +472,7 @@ class DateRange:
             9999  99    16..31 | a[0]    *       a[2]
 
             """
-            if arg0 == None:
+            if arg0 is None:
                 # No value
                 self.intvalue = -1
             elif isinstance(arg0, int):
@@ -498,14 +501,14 @@ class DateRange:
 
         def _set(self, year, month, day):
             """Set dateint value by integer components."""
-            if month == None or month == 0:
+            if month is None or month == 0:
                 month = 6
                 day = 0
             else:
                 if month < 7:
                     month -= 1
 
-                if day == None or day == 0:
+                if day is None or day == 0:
                     day = 15
                 else:
                     if day < 16:
@@ -673,10 +676,7 @@ class Gramps_DateRange(DateRange):
         Importing a DateRange from Gramps xml structure elements
         """
         if xml_tag == "dateval":
-            if xml_type:
-                dr = xml_type.upper()
-            else:
-                dr = "DATE"
+            dr = xml_type.upper() if xml_type else "DATE"
         elif xml_tag == "daterange":
             dr = "BETWEEN"
         elif xml_tag == "datespan":

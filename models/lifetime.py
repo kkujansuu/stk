@@ -77,7 +77,6 @@ class Year:
     def __sub__(self, years):
         if self.valuetype == "normal":
             return Year("normal", self.value - years)
-            self.value -= years
         return self
 
     def __eq__(self, other):
@@ -281,7 +280,7 @@ def calculate_estimates(personlist):
                     personlist2.add(parent)
                 for c in p.children:
                     personlist2.add(c)
-        if len(personlist2) == 0:
+        if not personlist2:
             break
         personlist = personlist2
         n += 1

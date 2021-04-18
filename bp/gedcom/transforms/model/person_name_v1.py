@@ -200,7 +200,6 @@ class PersonName_v1(GedcomLine):
         """ 1.1) GIVN given name part rules """
         self._evaluate_givn(name_default)
         """ 1.2) nsfx Suffix part: nothing to do? """
-        pass
         """ 1.3) SURN Surname part: pick each surname as a new PersonName_v1
                  Creates NAME, GIVN, SURN, NSFX rows and their associated lines into self.rows
         """
@@ -226,7 +225,7 @@ class PersonName_v1(GedcomLine):
                 return nm
             for short, full in _PATRONYME.items():
                 # Has ending as short, but short is not the whole name
-                if nm.endswith(short) and not short == nm:
+                if nm.endswith(short) and short != nm:
                     # 'Matinp.' --> 'Matinpoika'
                     return nm[: -len(short)] + full
             return None
@@ -378,12 +377,12 @@ class PersonName_v1(GedcomLine):
         """
 
         for nm in reversed(surnames):
-            if state == 0 or state == 2:  # Start state: Only a name expected
+            if state in [0, 2]:  # Start state: Only a name expected
                 """'op1: save name=nm, clear name_type and prefix"""
                 name = nm.capitalize()
                 prefix = name_type = None
                 state = 1
-            elif state == 1 or state == 4:  # Possible separator state /
+            elif state in [1, 4]:  # Possible separator state /
                 # left side name has been stored
                 if nm == ",":
                     """'op7: Create a 'known as' name to be returned later"""
@@ -399,12 +398,9 @@ class PersonName_v1(GedcomLine):
                     name = ""
                     name_type = _SURN[nm]
                     state = 2
-                elif len(nm) < 4 and not "." in nm:  # von
+                elif len(nm) < 4 and "." not in nm:  # von
                     """'op5/op6: Create or concatenate prefix"""
-                    if prefix:
-                        prefix = " ".join((nm.lower(), prefix))
-                    else:
-                        prefix = nm.lower()
+                    prefix = " ".join((nm.lower(), prefix)) if prefix else nm.lower()
                     state = 4
                 else:  # name
                     """'op3: Another name found"""
@@ -416,7 +412,7 @@ class PersonName_v1(GedcomLine):
             if known_as:
                 ret.append(known_as)
 
-        if len(ret) == 0:
+        if not ret:
             # No surname: give empty name
             return ((None, "", None),)
         return ret
@@ -454,10 +450,7 @@ class PersonName_v1(GedcomLine):
             if self.reported_value == value:
                 return
             pn.rows.append(GedcomLine((self.level + 1, _CHGTAG + tag, value)))
-            if self.path.endswith(tag):
-                path = self.path
-            else:
-                path = "{}.{}".format(self.path, tag)
+            path = self.path if self.path.endswith(tag) else "{}.{}".format(self.path, tag)
             LOG.info("{} {!r:>36} --> {!r}".format(path, value, new_value))
             self.reported_value = value
 

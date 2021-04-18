@@ -107,7 +107,7 @@ class Person(NodeObject):
         self.death_high = None
 
     def __str__(self):
-        dates = self.dates if self.dates else ""
+        dates = self.dates or ""
         return "{} {} {}".format(self.sex_str(), self.id, dates)
 
     def sex_str(self):
@@ -150,9 +150,9 @@ class Person(NodeObject):
     def sex_from_str(s):
         # Converts gender strings to ISO/IEC 5218 codes
         ss = s[:1].upper()
-        if ss == "M" or ss == str(SEX_MALE):
+        if ss in ["M", str(SEX_MALE)]:
             return SEX_MALE
-        if ss == "F" or ss == "N" or ss == str(SEX_FEMALE):
+        if ss in ["F", "N", str(SEX_FEMALE)]:
             return SEX_FEMALE
         return 0
 
@@ -315,7 +315,7 @@ class PersonBl(Person):
         # self.media_ref = []             # uniq_ids of models.gen.media.Media
         # (previous self.objref_hlink[])
 
-    def save(self, tx, **kwargs):  # batch_id):
+    def save(self, tx, **kwargs):    # batch_id):
         """Saves the Person object and possibly the Names, Events ja Citations.
 
         On return, the self.uniq_id is set
@@ -359,7 +359,7 @@ class PersonBl(Person):
                         )
                     )
                 # print("Person {} ".format(self.uniq_id))
-            if self.uniq_id == None:
+            if self.uniq_id is None:
                 print("iWarning got no uniq_id for Person {}".format(p_attr))
 
         except Exception as err:

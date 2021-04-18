@@ -94,20 +94,20 @@ class SurnameParser:
     def _parse_surnames0(self, surn):
         # ensimmäisenä käsitellään suluissa olevat tiedot: "(Mäkinen)" -> ("aka","Mäkinen")
         i = surn.find("(")
-        if i > 0:
-            j = surn.find(")", i)
-            if j < 0:
-                raise ParseError(f"Expecting ')': '{surn}'")
-            if j < i:
-                raise ParseError(f"Expecting ')': '{surn}'")
-            ret1 = self._parse_surnames_no_parens(surn[i + 1 : j])
-            for sn in ret1:
-                if sn.name_type is None:
-                    sn.name_type = Name_types.AKA
-            ret2 = self._parse_surnames0(f"{surn[:i]} {surn[j+1:]}")
-            return ret1 + ret2
-        else:
+        if i <= 0:
             return self._parse_surnames_no_parens(surn)
+
+        j = surn.find(")", i)
+        if j < 0:
+            raise ParseError(f"Expecting ')': '{surn}'")
+        if j < i:
+            raise ParseError(f"Expecting ')': '{surn}'")
+        ret1 = self._parse_surnames_no_parens(surn[i + 1 : j])
+        for sn in ret1:
+            if sn.name_type is None:
+                sn.name_type = Name_types.AKA
+        ret2 = self._parse_surnames0(f"{surn[:i]} {surn[j+1:]}")
+        return ret1 + ret2
 
     def _parse_surnames_no_parens(self, surn):
         # 'surn" on merkkijono, joissa ei pitäisi olla sulkumerkkejä

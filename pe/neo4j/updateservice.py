@@ -419,10 +419,7 @@ class Neo4jUpdateService(ConcreteService):
                         datetype1 = "before"
                     elif datetype == DR["AFTER"]:
                         datetype1 = "after"
-                    elif datetype == DR["BETWEEN"]:
-                        datetype1 = "after"
-                        datetype2 = "before"
-                    elif datetype == DR["PERIOD"]:
+                    elif datetype in [DR["BETWEEN"], DR["PERIOD"]]:
                         datetype1 = "after"
                         datetype2 = "before"
                     date1 = e["date1"]
@@ -554,10 +551,8 @@ class Neo4jUpdateService(ConcreteService):
         if not name > "":
             logging.warning("Missing name {} for {} - not added".format(reftype, name))
             return
-        if not (reftype in REFTYPES):
+        if reftype not in REFTYPES:
             raise ValueError("Invalid reftype {}".format(reftype))
-            return
-
         try:
             _result = self.tx.run(
                 CypherRefname.link_person_to, pid=pid, name=name, use=reftype
@@ -650,18 +645,19 @@ class Neo4jUpdateService(ConcreteService):
                 # Dates calculation
                 dates = None
                 end_date = None
-                if divorce_date:
-                    end_date = divorce_date
-                elif father_death_date and mother_death_date:
-                    if father_death_date < mother_death_date:
-                        end_date = father_death_date
-                    else:
-                        end_date = mother_death_date
-                elif father_death_date:
+                if (
+                    not divorce_date
+                    and father_death_date
+                    and father_death_date < mother_death_date
+                    or not divorce_date
+                    and not mother_death_date
+                    and father_death_date
+                ):
                     end_date = father_death_date
-                elif mother_death_date:
+                elif not divorce_date and mother_death_date:
                     end_date = mother_death_date
-
+                elif divorce_date:
+                    end_date = divorce_date
                 if marriage_date:
                     if end_date:
                         dates = DateRange(DR["PERIOD"], marriage_date, end_date)

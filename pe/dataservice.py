@@ -51,10 +51,7 @@ class DataService:
         self.dataservice = service_class(shareds.driver)
         self.pre_tx = tx
         # Prepare to restore the privious dataservice, if one exists
-        if shareds.dservice:
-            self.previous_dservice = shareds.dservice
-        else:
-            self.previous_dservice = None
+        self.previous_dservice = shareds.dservice or None
         shareds.dservice = self.dataservice
 
         if user_context:
@@ -73,7 +70,7 @@ class DataService:
             print(f"#~~~{self.idstr} enter active tx {self.pre_tx}")
             self.dataservice.tx = self.pre_tx
         else:
-            if self.service_name == "update" or self.service_name == "read_tx":
+            if self.service_name in ["update", "read_tx"]:
                 # 2. Create transaction
                 self.dataservice.tx = shareds.driver.session().begin_transaction()
                 print(

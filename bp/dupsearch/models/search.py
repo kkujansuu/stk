@@ -185,10 +185,7 @@ def generate_searchkey1(name_normalizer, n, count, rec, kwargs):
         if etype not in {"Birth", "Death"}:
             continue
         edate = event.dates.estimate()
-        if pl:
-            eplace = pl.get("pname")
-        else:
-            eplace = ""
+        eplace = pl.get("pname") if pl else ""
         if etype:
             etype = etype.replace("'", "_")
             if edate:
@@ -262,11 +259,7 @@ def generate_keys(args):
             collect(distinct [rn,bn]) as refnames,
             collect(distinct [e,pl]) as events
     """
-    if args.for_batch:
-        batch_id = args.for_batch
-    else:
-        batch_id = ""
-
+    batch_id = args.for_batch or ""
     if args.namematch_algo == "refnames":
         refnames = get_refnames()  # mapping of (nametype,name) -> refname
         name_normalizer = refnames.get
@@ -341,11 +334,8 @@ def getname(namenode):
 
 
 def getvalue(searchkeys, prefix):
-    valueset = set()
-    for key in searchkeys:
-        if key.startswith(prefix):
-            valueset.add(key[len(prefix) :])
-    if len(valueset) == 0:
+    valueset = {key[len(prefix) :] for key in searchkeys if key.startswith(prefix)}
+    if not valueset:
         return None
     else:
         return valueset
@@ -516,11 +506,10 @@ def search_dups(args):
         value = 0
         for res in matches:
             values = " ".join(
-                [
-                    "%s:%s" % (i + 1, value)
-                    for (i, value) in enumerate(res["matchvector"])
-                ]
+                "%s:%s" % (i + 1, value)
+                for (i, value) in enumerate(res["matchvector"])
             )
+
             matchdata = "{} {}\n".format(value, values)
             f.write(matchdata)
             value = 1 - value
@@ -544,10 +533,7 @@ def get_refnames_by_type(nametype):
     for refname in refnames:
         if refname.reftype.find(nametype) < 0:
             continue
-        if refname.refname:
-            namemap[refname.name] = refname.refname
-        else:
-            namemap[refname.name] = refname.name
+        namemap[refname.name] = refname.refname or refname.name
     return namemap
 
 

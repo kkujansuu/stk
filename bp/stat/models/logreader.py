@@ -266,9 +266,7 @@ class Counter:
 
         """
 
-        res = []
-        for counter in self._counters.values():
-            res.append(counter.get_subreport(level=0))
+        res = [counter.get_subreport(level=0) for counter in self._counters.values()]
         files = [x[x.rindex("/") + 1 :] for x in self._files]
 
         return (", ".join(files), res)

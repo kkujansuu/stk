@@ -316,15 +316,13 @@ def translate(term, var_name, show_table=False):
     try:
         if term:
             return tabl[term]
-        else:
-            if show_table:
-                # Return conversion table
-                return tabl
-            else:
-                print(
-                    f"WARNING: ui.jinja_filters.translate: missing term={term}, var_name={var_name}"
-                )
-                return "~"
+        if show_table:
+            # Return conversion table
+            return tabl
+        print(
+            f"WARNING: ui.jinja_filters.translate: missing term={term}, var_name={var_name}"
+        )
+        return "~"
     except:
         return "'" + term + "'"
 

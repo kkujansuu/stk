@@ -30,8 +30,7 @@ from models import syslog
 
 
 def get_sysname():
-    sysname = shareds.app.config.get("STK_SYSNAME")
-    return sysname
+    return shareds.app.config.get("STK_SYSNAME")
 
 
 def email(mail_from, mail_to, subject, body):

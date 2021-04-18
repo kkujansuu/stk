@@ -66,10 +66,7 @@ class Media(NodeObject):
         n.description = node["description"]
         n.src = node["src"]
         n.mime = node["mime"]
-        if n.src:
-            n.name = os.path.split(n.src)[1]
-        else:
-            n.name = ""
+        n.name = os.path.split(n.src)[1] if n.src else ""
         return n
 
     #     @staticmethod
@@ -257,13 +254,13 @@ class Media(NodeObject):
         print("Description: " + self.description)
         return True
 
-    def save(self, tx, **kwargs):  # batch_id=None):
+    def save(self, tx, **kwargs):    # batch_id=None):
         """Saves this new Media object to db.
 
         #TODO: Process also Notes for media?
 
         """
-        if not "batch_id" in kwargs:
+        if "batch_id" not in kwargs:
             raise RuntimeError(f"Media.save needs batch_id for parent {self.id}")
 
         self.uuid = self.newUuid()

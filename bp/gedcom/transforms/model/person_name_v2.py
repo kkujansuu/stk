@@ -242,7 +242,7 @@ class PersonName:
                 return nm
             for short, full in _PATRONYME.items():
                 # Has ending as short, but short is not the whole name
-                if nm.endswith(short) and not short == nm:
+                if nm.endswith(short) and short != nm:
                     # 'Matinp.' --> 'Matinpoika'
                     return nm[: -len(short)] + full
             return None

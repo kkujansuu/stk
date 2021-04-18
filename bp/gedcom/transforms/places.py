@@ -129,10 +129,7 @@ def initialize(options):
 
 
 def is_in_foreign_country(place):
-    for country in foreign_countries:
-        if place.endswith(country):
-            return True
-    return False
+    return any(place.endswith(country) for country in foreign_countries)
 
 
 class Places(transformer.Transformation):
@@ -275,7 +272,7 @@ def read_parishes(parishfile):
 def read_villages(villagefile):
     for line in open(villagefile, encoding="utf-8"):
         line = line.strip()
-        if not ":" in line:
+        if ":" not in line:
             continue
         parish, village = line.split(":", 1)
         parish = parish.strip().lower()

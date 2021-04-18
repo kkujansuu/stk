@@ -185,10 +185,7 @@ def get_transforms():
             except:
                 continue
             doc = transformer.__doc__
-            if doc:
-                docline = doc.strip().splitlines()[0]
-            else:
-                docline = ""
+            docline = doc.strip().splitlines()[0] if doc else ""
             version = getattr(transformer, "version", "")
             yield (modname, transformer, docline, version)
 

@@ -145,7 +145,6 @@ def clear_empty_batches():
                 cnt = Batch.drop_empty_batches()
                 if cnt == 0:
                     flash(_("No empty batches removed"), "warning")
-                pass
         logger.info(f"-> bp.admin.routes.clear_empty_batches {cnt}")
         batches = Batch.list_empty_batches()
     except Exception as e:
@@ -167,10 +166,7 @@ def clear_empty_batches():
 def estimate_dates(uid=None):
     """ syntymä- ja kuolinaikojen arvioiden asettaminen henkilöille """
     logger.warning(f"OBSOLETE? -> bp.admin.routes.estimate_dates sel={uid}")
-    if uid:
-        uids = list(uid)
-    else:
-        uids = []
+    uids = list(uid) if uid else []
     message = dataupdater.set_person_estimated_dates(uids)
     ext = _("estimated lifetime")
     return render_template("/talletettu.html", text=message, info=ext)
@@ -563,10 +559,7 @@ def readlog():
     """
     direction = request.args.get("direction")
     startid_arg = request.args.get("id")
-    if startid_arg:
-        startid = int(startid_arg)
-    else:
-        startid = None
+    startid = int(startid_arg) if startid_arg else None
     recs = syslog.readlog(direction, startid)
     logger.info(f"-> bp.admin.routes.readlog")  # n={len(recs)}")
     return render_template("/admin/syslog.html", recs=recs)

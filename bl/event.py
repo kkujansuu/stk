@@ -251,7 +251,7 @@ class EventBl(Event):
             # Convert 'attr' dict to list for db
             a = []
             for key, value in self.attr.items():
-                a = a + [key, value]
+                a += [key, value]
                 e_attr.update({"attr": a})
         if self.dates:
             e_attr.update(self.dates.for_db())
@@ -324,5 +324,4 @@ class EventWriter:
         self.u_context = u_context
 
     def update_event(self, uuid, args):
-        rec = self.writeservice.dr_update_event(uuid, args)
-        return rec
+        return self.writeservice.dr_update_event(uuid, args)

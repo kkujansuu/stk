@@ -69,28 +69,26 @@ class Point:
                 if not isinstance(x, float):
                     if not x:
                         raise ValueError("Point arg empty ({})".format(self.coord))
-                    if isinstance(x, str):
-                        # String conversion to float:
-                        #   example "60° 37' 34,647N" gives ['60', '37', '34.647']
-                        #   and "26° 11\' 7,411"I" gives
-                        a = x.translate(self._point_coordinate_tr).split()
-                        if not a:
-                            raise ValueError("Point arg error {}".format(self.coord))
-                        degrees = float(a[0])
-                        if len(a) > 1:
-                            if len(a) == 3:  # There are minutes and second
-                                minutes = float(a[1])
-                                seconds = float(a[2])
-                                self.coord[i] = (
-                                    degrees + minutes / 60.0 + seconds / 3600.0
-                                )
-                            else:  # There are no seconds
-                                minutes = float(a[1])
-                                self.coord[i] = degrees + minutes / 60.0
-                        else:  # Only degrees
-                            self.coord[i] = degrees
-                    else:
+                    if not isinstance(x, str):
                         raise ValueError("Point arg type is {}".format(self.coord[i]))
+                    # String conversion to float:
+                    #   example "60° 37' 34,647N" gives ['60', '37', '34.647']
+                    #   and "26° 11\' 7,411"I" gives
+                    a = x.translate(self._point_coordinate_tr).split()
+                    if not a:
+                        raise ValueError("Point arg error {}".format(self.coord))
+                    degrees = float(a[0])
+                    if len(a) > 1:
+                        minutes = float(a[1])
+                        if len(a) == 3:  # There are minutes and second
+                            seconds = float(a[2])
+                            self.coord[i] = (
+                                degrees + minutes / 60.0 + seconds / 3600.0
+                            )
+                        else:  # There are no seconds
+                            self.coord[i] = degrees + minutes / 60.0
+                    else:  # Only degrees
+                        self.coord[i] = degrees
         except:
             raise
 

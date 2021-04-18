@@ -152,10 +152,7 @@ def phase3(run_args, gedline, f):
                 state = 2
                 return
             # Other level 1 lines terminate NAME and are stored as INDI members
-            if gedline.tag == "BIRT":
-                state = 3
-            else:
-                state = 1
+            state = 3 if gedline.tag == "BIRT" else 1
             _T6_store_member(gedline)
         else:
             # Higher level lines are stored as a new members in the latest NAME group

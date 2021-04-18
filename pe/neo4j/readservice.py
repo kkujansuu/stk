@@ -240,7 +240,7 @@ class Neo4jReadService(ConcreteService):
 
                     # Events
                     for node, pname, role in record["events"]:
-                        if not node is None:
+                        if node is not None:
                             e = EventBl.from_node(node)
                             e.place = pname or ""
                             if role and role != "Primary":
@@ -256,7 +256,7 @@ class Neo4jReadService(ConcreteService):
                     "statustext": f"dr_get_person_list: {e.__class__.__name__} {e}",
                 }
 
-        if len(persons) == 0:
+        if not persons:
             return {
                 "items": persons,
                 "status": Status.NOT_FOUND,
@@ -487,20 +487,19 @@ class Neo4jReadService(ConcreteService):
 
                     role = record["role"]
                     person_node = record["person"]
-                    if person_node:
-                        if uniq_id != person_node.id:
-                            # Skip person with double default name
-                            p = PersonBl.from_node(person_node)
-                            p.role = role
-                            name_node = record["name"]
-                            if name_node:
-                                p.names.append(Name.from_node(name_node))
+                    if person_node and uniq_id != person_node.id:
+                        # Skip person with double default name
+                        p = PersonBl.from_node(person_node)
+                        p.role = role
+                        name_node = record["name"]
+                        if name_node:
+                            p.names.append(Name.from_node(name_node))
 
-                            birth_node = record["birth"]
-                            death_node = record["death"]
-                            self._set_birth_death(p, birth_node, death_node)
+                        birth_node = record["birth"]
+                        death_node = record["death"]
+                        self._set_birth_death(p, birth_node, death_node)
 
-                            parents.append(p)
+                        parents.append(p)
 
             except Exception as e:
                 return {
@@ -744,7 +743,7 @@ class Neo4jReadService(ConcreteService):
                     # >
                     family_node = record["family"]
                     fid = family_node.id
-                    if not fid in families:
+                    if fid not in families:
                         # New family
                         family = FamilyBl.from_node(family_node)
                         family.parents = []
@@ -796,7 +795,7 @@ class Neo4jReadService(ConcreteService):
         if lang not in ["fi", "sv"]:
             lang = "fi"
         with self.driver.session(default_access_mode="READ") as session:
-            if user == None:
+            if user is None:
                 # 1 get approved common data
                 print("Neo4jReadService.dr_get_place_list_fw: approved")
                 result = session.run(
@@ -839,9 +838,7 @@ class Neo4jReadService(ConcreteService):
                 # Set place names and default display name pname
                 node = record["name"]
                 p.names.append(PlaceName.from_node(node))
-                oth_names = []
-                for node in record["names"]:
-                    oth_names.append(PlaceName.from_node(node))
+                oth_names = [PlaceName.from_node(node) for node in record["names"]]
                 # Arrage names by local language first
                 lst = PlaceName.arrange_names(oth_names)
 
@@ -859,7 +856,7 @@ class Neo4jReadService(ConcreteService):
         pl = None
         node_ids = []  # List of uniq_is for place, name, note and media nodes
         with self.driver.session(default_access_mode="READ") as session:
-            if user == None:
+            if user is None:
                 result = session.run(
                     CypherPlace.get_common_w_names_notes, uuid=uuid, lang=lang
                 )
@@ -976,9 +973,7 @@ class Neo4jReadService(ConcreteService):
                 node = record["name"]
                 if node:
                     p.names.append(PlaceName.from_node(node))
-                oth_names = []
-                for node in record["names"]:
-                    oth_names.append(PlaceName.from_node(node))
+                oth_names = [PlaceName.from_node(node) for node in record["names"]]
                 # Arrage names by local language first
                 lst = PlaceName.arrange_names(oth_names)
                 p.names += lst
@@ -1147,7 +1142,7 @@ class Neo4jReadService(ConcreteService):
         """Returns the PlaceBl with Notes and PlaceNames included."""
         source = None
         with self.driver.session(default_access_mode="READ") as session:
-            if user == None:
+            if user is None:
                 result = session.run(
                     CypherSource.get_auditted_set_single_selection, uuid=uuid
                 )
@@ -1198,7 +1193,7 @@ class Neo4jReadService(ConcreteService):
         """
 
         with self.driver.session(default_access_mode="READ") as session:
-            if user == None:
+            if user is None:
                 # Show approved common data
                 result = session.run(
                     CypherMedia.read_approved_medias,
@@ -1215,9 +1210,7 @@ class Neo4jReadService(ConcreteService):
                     limit=limit,
                 )
 
-            recs = []
-            for record in result:
-                recs.append(record)
+            recs = [record for record in result]
             #             recs = [record for record in result]
             if recs:
                 return {"recs": recs, "status": Status.OK}
@@ -1315,9 +1308,7 @@ class Neo4jReadService(ConcreteService):
                 citation = Citation.from_node(citation_node)
                 citations[uniq_id] = citation
 
-                notelist = []
-                for node in note_nodes:
-                    notelist.append(Note.from_node(node))
+                notelist = [Note.from_node(node) for node in note_nodes]
                 if notelist:
                     notes[uniq_id] = notelist
 

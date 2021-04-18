@@ -101,9 +101,7 @@ class User:
     def beginTransaction():
         """ Aloittaa transaction """
 
-        tx = shareds.driver.session().begin_transaction()
-
-        return tx
+        return shareds.driver.session().begin_transaction()
 
     @staticmethod
     def endTransaction(tx):

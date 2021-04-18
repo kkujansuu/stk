@@ -105,14 +105,8 @@ class Marriages(transformer.Transformation):
         place1 = m.group(1).strip()
         place2 = m.group(2).strip()
         place3 = m.group(3).strip()
-        if place2 == "-":
-            husb_place = place1
-        else:
-            husb_place = place2 + ", " + place1
-        if place3 == "-":
-            wife_place = place1
-        else:
-            wife_place = place3 + ", " + place1
+        husb_place = place1 if place2 == "-" else place2 + ", " + place1
+        wife_place = place1 if place3 == "-" else place3 + ", " + place1
         return place1, husb_place, wife_place
 
     def transform(self, item, options, phase):
@@ -124,16 +118,16 @@ class Marriages(transformer.Transformation):
             husb = None
             wife = None
             for c1 in item.children:
-                if c1.tag == "MARR":
-                    for c2 in c1.children:
-                        if c2.tag == "PLAC":
-                            place = c2.value
-                            place_item = c2
-                        if c2.tag == "DATE":
-                            date = c2.value
                 if c1.tag == "HUSB":
                     husb = c1.value
-                if c1.tag == "WIFE":
+                elif c1.tag == "MARR":
+                    for c2 in c1.children:
+                        if c2.tag == "DATE":
+                            date = c2.value
+                        elif c2.tag == "PLAC":
+                            place = c2.value
+                            place_item = c2
+                elif c1.tag == "WIFE":
                     wife = c1.value
             if not (husb and wife):
                 return True

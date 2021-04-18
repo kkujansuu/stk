@@ -70,8 +70,7 @@ MATCH x= (p:Place)-[r:IS_INSIDE*]->(i:Place) WHERE ID(p) = $locid
 
 def load_to_tree_struct(result):
     t = treelib.Tree()
-    nl = {}
-    nl[0] = "root"
+    nl = {0: "root"}
     nstack = []
     rl = {}
     # Juurisolu 0 mahdollistaa solun lisäämisen ylimmän varsinaisen solun
@@ -83,12 +82,12 @@ def load_to_tree_struct(result):
         # Tuloksessa on kaikki ko. relaatioon osallistuvat solut ja niiden
         # väliset yksittäiset yhteydet
         for node in record["nodes"]:
-            if not node.id in nl:
+            if node.id not in nl:
                 nl[node.id] = node["pname"]
                 nstack.append((node.id, node["type"], node["pname"], record["lv"]))
         for rel in record["r"]:
             # Käydään läpi relaatioketjun yksittäiset (start)-->(end) -välit
-            if not rel.id in rl:
+            if rel.id not in rl:
                 rl[rel.id] = rel.end
                 nid, ntype, nname, lv = nstack.pop()
                 if len(rl) == 1:  # Ensimmäinen solmu rootin alle
@@ -97,10 +96,7 @@ def load_to_tree_struct(result):
                     #                     print("create_node('{}', '{}', parent={}, data={})".\
                     #                           format(nname1, nid1, 0, {'type':ntype1}))
                     t.create_node(nname1, nid1, parent=0, data={"type": ntype1})
-                if lv > 0:
-                    parent = rel.end
-                else:
-                    parent = t.parent(rel.start).identifier
+                parent = rel.end if lv > 0 else t.parent(rel.start).identifier
                 # Lisätään uusi solu ensin nykyisen rinnalle ja
                 # sitten siirretään nykyinen uuden alle
                 t.create_node(nname, nid, parent=parent, data={"type": ntype})
@@ -122,7 +118,7 @@ def print_tree(t):
             if node.bpointer in nl:
                 lv = nl[node.bpointer] + 1
             else:
-                lv = lv + 1
+                lv += 1
                 nl[node.identifier] = lv
             fill = "        " * (lv - 1)
             print(f"({lv}){fill} {node.bpointer:6d}<-{node.identifier:6d} {node.tag} ")
@@ -132,10 +128,7 @@ if __name__ == "__main__":
     """Run 'python test/place_tree.py 103338'
     where the argument is uniq_id of a place
     """
-    if len(sys.argv) <= 1:
-        locid = 21773
-    else:
-        locid = int(sys.argv[1])
+    locid = 21773 if len(sys.argv) <= 1 else int(sys.argv[1])
     print(f"paikka {locid}")
 
     connect_db()

@@ -120,11 +120,7 @@ def set_family_calculated_attributes(tx=None, uniq_id=None):
     dates_count = 0
     sortname_count = 0
 
-    if tx:
-        my_tx = tx
-    else:
-        my_tx = User.beginTransaction()
-
+    my_tx = tx or User.beginTransaction()
     # Process each family
     #### Todo Move and refactor to bl.FamilyBl
     result = Family_combo.get_dates_parents(my_tx, uniq_id)
@@ -138,18 +134,19 @@ def set_family_calculated_attributes(tx=None, uniq_id=None):
 
         dates = None
         end_date = None
-        if divorce_date:
-            end_date = divorce_date
-        elif father_death_date and mother_death_date:
-            if father_death_date < mother_death_date:
-                end_date = father_death_date
-            else:
-                end_date = mother_death_date
-        elif father_death_date:
+        if (
+            not divorce_date
+            and father_death_date
+            and father_death_date < mother_death_date
+            or not divorce_date
+            and not mother_death_date
+            and father_death_date
+        ):
             end_date = father_death_date
-        elif mother_death_date:
+        elif not divorce_date and mother_death_date:
             end_date = mother_death_date
-
+        elif divorce_date:
+            end_date = divorce_date
         if marriage_date:
             if end_date:
                 dates = DateRange(DR["PERIOD"], marriage_date, end_date)

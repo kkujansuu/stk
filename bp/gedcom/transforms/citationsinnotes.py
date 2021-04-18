@@ -202,12 +202,13 @@ def parseText(textpart):
                             src_groups[1],
                             src_groups[2],
                             src_groups[3],
-                            src_groups[4] if src_groups[4] else "",
+                            src_groups[4] or "",
                             str(src_groups[5]) if src_groups[5] else "",
-                            src_groups[6] if src_groups[6] else "",
-                            src_groups[7] if src_groups[7] else "",
+                            src_groups[6] or "",
+                            src_groups[7] or "",
                         )
                     )
+
 
                 endYear = ""
                 if archiver == "":
@@ -217,7 +218,7 @@ def parseText(textpart):
                 elif len(src_groups[3]) == 2:
                     endYear = int(src_groups[2][0:2] + src_groups[3])
                     if endYear < int(src_groups[2]):
-                        endYear = endYear + 100
+                        endYear += 100
                 else:
                     endYear = int(src_groups[3])
                 textout = "{} {} {}{} {}".format(
@@ -225,8 +226,9 @@ def parseText(textpart):
                     src_groups[1],
                     src_groups[2],
                     "-" + str(endYear) if endYear else "",
-                    src_groups[4] if src_groups[4] else "",
+                    src_groups[4] or "",
                 )
+
                 textouts.append(textout)
                 cstring = "{} {}".format(
                     ("s." + str(src_groups[6]) if src_groups[6] else ""),

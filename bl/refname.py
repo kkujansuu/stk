@@ -106,10 +106,7 @@ class Refname(NodeObject):
         """Creating reference name
         The name is saved with first letter capitalized
         """
-        if nimi:
-            self.name = nimi.strip().title()
-        else:
-            self.name = None
+        self.name = nimi.strip().title() if nimi else None
         self.uniq_id = None
 
     def __eq__(self, other):
@@ -143,11 +140,7 @@ class Refname(NodeObject):
         n.id = node["id"] or ""
         n.name = node["name"]
         n.source = node["source"]
-        if "sex" in node:
-            n.sex = node["sex"]
-        else:
-            n.sex = SEX_UNKOWN
-
+        n.sex = node["sex"] if "sex" in node else SEX_UNKOWN
         return n
 
     def sex_str(self):
@@ -411,7 +404,7 @@ class Refname(NodeObject):
                 if rn.usecount > 0:
                     # References from a Person exists
                     for l in result["l_uses"]:
-                        if not l in reftypes:
+                        if l not in reftypes:
                             reftypes.append(l)
                     reftypes.reverse()
                 rn.refname = ", ".join(refnames)

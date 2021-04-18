@@ -97,13 +97,13 @@ class Name(NodeObject):
         n.order = node["order"]
         return n
 
-    def save(self, tx, **kwargs):  # parent_id=None):
+    def save(self, tx, **kwargs):    # parent_id=None):
         """Creates or updates this Name node. (There is no handle)
         If parent_id is given, a link (parent) -[:NAME]-> (Name) is created
 
         #TODO: Check, if this name exists; then update or create new
         """
-        if not "parent_id" in kwargs:
+        if "parent_id" not in kwargs:
             raise ValueError("Name.save: no base person defined")
 
         try:

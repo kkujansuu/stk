@@ -52,7 +52,7 @@ class BatchLog:
         """
         Creates a Batch object
         """
-        if userid == None:
+        if userid is None:
             raise AttributeError("Batch.userid must be defined")
         self.bid = None
         self.userid = userid
@@ -112,10 +112,7 @@ class BatchLog:
 
     def str_list(self):
         """ Gets the active LogItem steps as a list of strings """
-        li = []
-        for e in self.steps:
-            li.append(str(e))
-        return li
+        return [str(e) for e in self.steps]
 
 
 class LogItem:
@@ -139,10 +136,7 @@ class LogItem:
         self.percent = ev["percent"] if "percent" in ev else None
 
     def __str__(self):
-        if self.count == None:
-            c = ""
-        else:
-            c = self.count
+        c = "" if self.count is None else self.count
         if self.elapsed:
             e = "{:.4f}".format(self.elapsed)
             return f"{self.level} {self.title}: {c} / {e} sek"

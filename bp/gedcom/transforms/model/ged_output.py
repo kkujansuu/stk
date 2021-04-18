@@ -48,8 +48,6 @@ class Output:
         input_encoding = self.args.encoding
         if input_encoding in {"UTF-8", "UTF-8-SIG"}:
             self.output_encoding = "UTF-8"
-        elif input_encoding == "ISO8859-1":
-            self.output_encoding = input_encoding
         else:
             self.output_encoding = input_encoding
         if self.out_name:
@@ -126,12 +124,11 @@ class Output:
             print(msg)
             LOG.info(msg)
         else:
-            if self.in_name:
-                if self.out_name == None:
-                    # Only input given
-                    os.rename(self.in_name, self.new_name)
-                    os.rename(self.temp_name, self.in_name)
-                    print("Luettu tiedosto '{}'".format(self.new_name))
-                    print("  Uusi tiedosto '{}'".format(self.in_name))
-                    LOG.info("Luettu     %s", self.new_name)
-                    LOG.info("Tulostettu %s", self.in_name)
+            if self.in_name and self.out_name is None:
+                # Only input given
+                os.rename(self.in_name, self.new_name)
+                os.rename(self.temp_name, self.in_name)
+                print("Luettu tiedosto '{}'".format(self.new_name))
+                print("  Uusi tiedosto '{}'".format(self.in_name))
+                LOG.info("Luettu     %s", self.new_name)
+                LOG.info("Tulostettu %s", self.in_name)

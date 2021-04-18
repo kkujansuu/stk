@@ -174,28 +174,26 @@ class PlaceBl(Place):
             # 1.     find matching languages for use_langs
             for lang in use_langs:
                 for name in names:
-                    if name.lang == lang and not lang in selection.keys():
+                    if name.lang == lang and lang not in selection:
                         # A matching language
                         # print(f'# select {lang}: {name.name} {name.uniq_id}')
                         selection[lang] = name.uniq_id
             # 2. find replacing languages, if not matching
             for lang in use_langs:
-                if not lang in selection.keys():
+                if lang not in selection:
                     # Maybe a missing language is found?
                     for name in names:
-                        if name.lang == "" and not lang in selection.keys():
+                        if name.lang == "" and not lang in selection:
                             # print(f'# select {lang}>{name.lang}: {name.name} {name.uniq_id}')
                             selection[lang] = name.uniq_id
-                if not lang in selection.keys():
+                if lang not in selection:
                     # No missing language, select any
                     for name in names:
-                        if not lang in selection.keys():
+                        if lang not in selection:
                             # print(f'# select {lang}>{name.lang}: {name.name} {name.uniq_id}')
                             selection[lang] = name.uniq_id
 
-            ret = {}
-            for lang in use_langs:
-                ret[lang] = selection[lang]
+            ret = {lang: selection[lang] for lang in use_langs}
             return {"status": Status.OK, "ids": ret}
 
         except Exception as e:
@@ -442,10 +440,7 @@ class PlaceName(NodeObject):
         self.order = 0
 
     def __str__(self):
-        if self.dates:
-            d = "/" + str(self.dates)
-        else:
-            d = ""
+        d = "/" + str(self.dates) if self.dates else ""
         if self.lang != "":
             return f"'{self.name}' ({self.lang}){d}"
         else:
@@ -503,17 +498,17 @@ class PlaceName(NodeObject):
 
     def _lang_key(self, obj):
         """ Name comparison key by 1) language, 2) name """
-        lang_order = {
-            "fi": "0",
-            "sv": "1",
-            "vi": "2",
-            "de": "3",
-            "la": "4",
-            "ru": "5",
-            "": "6",
-        }
         if obj:
-            if obj.lang in lang_order.keys():
+            lang_order = {
+                "fi": "0",
+                "sv": "1",
+                "vi": "2",
+                "de": "3",
+                "la": "4",
+                "ru": "5",
+                "": "6",
+            }
+            if obj.lang in lang_order:
                 return lang_order[obj.lang] + ":" + obj.name
             return "x:" + obj.name
         return ""
@@ -631,14 +626,13 @@ class PlaceReader(DataService):
         Return placename stats so that the names can be displayed in a name cloud.
         """
         if self.use_user:
-            placename_stats = shareds.dservice.dr_get_placename_stats_by_user(
+            return shareds.dservice.dr_get_placename_stats_by_user(
                 self.use_user, count=count
             )
         else:
-            placename_stats = shareds.dservice.dr_get_placename_stats_common(
+            return shareds.dservice.dr_get_placename_stats_common(
                 count=count
             )
-        return placename_stats
 
 
 class PlaceUpdater(DataService):

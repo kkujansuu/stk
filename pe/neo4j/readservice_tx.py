@@ -42,10 +42,7 @@ class MediaReference:
             id_str = f'{label} {self.node.id}:{self.node["id"]}'
         else:
             id_str = ""
-        if self.crop:
-            crop_str = f"[{self.crop}]"
-        else:
-            crop_str = ""
+        crop_str = f"[{self.crop}]" if self.crop else ""
         return f"-{crop_str}-> ({id_str})"
 
 
@@ -84,7 +81,7 @@ class Neo4jReadServiceTx(ConcreteService):
     def __init__(self, driver=None):
 
         print(f"#~~~~{self.__class__.__name__} init")
-        self.driver = driver if driver else shareds.driver
+        self.driver = driver or shareds.driver
 
     def tx_get_person_list(self, args):
         """Read Person data from given fw_from.
@@ -209,7 +206,7 @@ class Neo4jReadServiceTx(ConcreteService):
                 "statustext": f"tx_get_person_list: {e.__class__.__name__} {e}",
             }
 
-        if len(persons) == 0:
+        if not persons:
             return {
                 "items": [],
                 "status": Status.NOT_FOUND,
@@ -499,8 +496,6 @@ class Neo4jReadServiceTx(ConcreteService):
                 if upper_place_node:
                     pn_nodes = record["pinames"]
                     references[place_uniq_id] = (upper_place_node, pn_nodes)
-                pass
-
         except Exception as e:
             print(
                 f"Could not read places for {len(base_objs)} objects: {e.__class__.__name__} {e}"
@@ -588,12 +583,15 @@ class Neo4jReadServiceTx(ConcreteService):
                 ref_list = coll.get(src_uniq_id, None)
                 if ref_list:
                     # There are already targets referred from src_node
-                    if not ref in ref_list:
+                    if ref not in ref_list:
                         coll[src_uniq_id].append(ref)
                 else:
                     coll[src_uniq_id] = [ref]
 
-                if not (target_uniq_id in new_obj_ids or target_uniq_id in active_objs):
+                if (
+                    target_uniq_id not in new_obj_ids
+                    and target_uniq_id not in active_objs
+                ):
                     new_obj_ids.append(target_uniq_id)
 
         except Exception as e:
@@ -619,7 +617,7 @@ class Neo4jReadServiceTx(ConcreteService):
 
         --> Origin from models.obsolete_source_citation_reader.read_sources_repositories
         """
-        if len(citation_uids) == 0:
+        if not citation_uids:
             return {"status": Status.NOT_FOUND}
         references = {}  # {Citation.unid_id: SourceReference}
 

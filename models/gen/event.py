@@ -154,10 +154,7 @@ class Event(NodeObject):
             "dates",
             "attr",
         ]
-        lists = []
-
-        for record in result:
-            lists.append(Event._event_listing(record))
+        lists = [Event._event_listing(record) for record in result]
 
         return (titles, lists)
 
@@ -182,10 +179,7 @@ class Event(NodeObject):
             "dates",
             "attr",
         ]
-        lists = []
-
-        for record in result:
-            lists.append(Event._event_listing(record))
+        lists = [Event._event_listing(record) for record in result]
 
         return (titles, lists)
 
@@ -226,7 +220,7 @@ class Event(NodeObject):
             data_line.append(str(DateRange(ev["dates"])))
         else:
             data_line.append("-")
-        if "attr" in record["e"]:
+        if "attr" in ev:
             attr_list = ev["attr"]
             if attr_list != None and attr_list.__len__() >= 2:
                 data_line.append("{}: {}".format(attr_list[0], attr_list[1]))

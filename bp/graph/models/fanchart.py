@@ -47,23 +47,23 @@ class FanChart:
             """
             Given the gender code according to ISO 5218, returns a color for fanchart.
             """
-            ancestor_colors = {
-                0: "lightgrey",  # ISO 5218: 0 = Not known
-                1: "lightsteelblue",  # ISO 5218: 1 = Male
-                2: "thistle",  # ISO 5218: 2 = Female
-                9: "lightyellow",  # ISO 5218: 9 = Not applicable
-            }
-            descendant_colors = {
-                0: "lightgrey",  # ISO 5218: 0 = Not known
-                1: "lightskyblue",  # ISO 5218: 1 = Male
-                2: "lightpink",  # ISO 5218: 2 = Female
-                9: "lightyellow",  # ISO 5218: 9 = Not applicable
-            }
             if descendant:
+                descendant_colors = {
+                    0: "lightgrey",  # ISO 5218: 0 = Not known
+                    1: "lightskyblue",  # ISO 5218: 1 = Male
+                    2: "lightpink",  # ISO 5218: 2 = Female
+                    9: "lightyellow",  # ISO 5218: 9 = Not applicable
+                }
                 return descendant_colors.get(
                     sex, "white"
                 )  # white if value is not in ISO 5218
             else:
+                ancestor_colors = {
+                    0: "lightgrey",  # ISO 5218: 0 = Not known
+                    1: "lightsteelblue",  # ISO 5218: 1 = Male
+                    2: "thistle",  # ISO 5218: 2 = Female
+                    9: "lightyellow",  # ISO 5218: 9 = Not applicable
+                }
                 return ancestor_colors.get(
                     sex, "white"
                 )  # white if value is not in ISO 5218

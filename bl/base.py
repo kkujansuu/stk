@@ -116,7 +116,7 @@ class NodeObject:
                 self.uuid = uniq_id
 
     def __str__(self):
-        uuid = self.uuid if self.uuid else "-"
+        uuid = self.uuid or "-"
         return f'(NodeObject {uuid}/{self.uniq_id}/{self.id} date {self.dates})"'
 
     @classmethod

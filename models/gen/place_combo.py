@@ -66,10 +66,7 @@ class Place_combo(Place):
         self.media_ref = []  # uniq_id of models.gen.obsolete_media.Media
 
     def __str__(self):
-        if hasattr(self, "level"):
-            lv = self.level
-        else:
-            lv = ""
+        lv = self.level if hasattr(self, "level") else ""
         return f"{self.pname} ({self.type}) {lv}"
 
     #     @classmethod from_node(cls, node):
@@ -342,10 +339,7 @@ class Place_combo(Place):
         #TODO Remove, not in use
         #TODO Lajiteltava kielen mukaan jotenkin
         """
-        ret = []
-        for n in sorted(self.names, key=lambda x: x.lang):
-            ret.append(n)
-        return ret
+        return [n for n in sorted(self.names, key=lambda x: x.lang)]
 
 
 #     def get_place_tree(locid): # @staticmethod > Neo4jDriver.get_place_tree

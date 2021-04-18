@@ -133,7 +133,7 @@ class Repository(NodeObject):
 
     def save(self, tx, **kwargs):
         """Saves this Repository to db under given batch."""
-        if not "batch_id" in kwargs:
+        if "batch_id" not in kwargs:
             raise RuntimeError(f"Repository.save needs batch_id for {self.id}")
 
         self.uuid = self.newUuid()

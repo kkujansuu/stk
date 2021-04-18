@@ -622,16 +622,7 @@ def json_get_event():
         status = res.get("status")
         if status != Status.OK:
             flash(f'{_("Event not found")}: {res.get("statustext")}', "error")
-        if status == Status.NOT_FOUND:
-            return jsonify(
-                {
-                    "event": None,
-                    "members": [],
-                    "statusText": _("No event found"),
-                    "status": status,
-                }
-            )
-        elif status != Status.OK:
+        if status != Status.OK:
             return jsonify(
                 {
                     "event": None,
@@ -1004,7 +995,7 @@ def show_sources(series=None):
         # except KeyError as e:
         # return redirect(url_for('virhesivu', code=1, text=str(e)))
 
-    series = u_context.series if u_context.series else "all"
+    series = u_context.series or "all"
     stk_logger(
         u_context, f"-> bp.scene.routes.show_sources/{series} n={len(res['items'])}"
     )
@@ -1121,11 +1112,7 @@ def show_media(uuid=None):
         flash(f'{res.get("statustext","error")}', "error")
         fullname = None
         mimetype = None
-    if mimetype == "application/pdf":
-        size = 0
-    else:
-        size = media.get_image_size(fullname)
-
+    size = 0 if mimetype == "application/pdf" else media.get_image_size(fullname)
     return render_template(
         "/scene/media.html", media=medium, size=size, user_context=u_context, menuno=6
     )
@@ -1258,14 +1245,13 @@ def fetch_comments():
         last_timestamp = c.timestamp
     if last_timestamp is None:
         return "<span id='no_comments'>" + _("No previous comments") + "</span>"
-    else:
-        stk_logger(u_context, f"-> bp.scene.routes.fetch_comments n={len(comments)}")
-        return render_template(
-            "/scene/comments/fetch_comments.html",
-            comments=comments[0:4],
-            last_timestamp=last_timestamp,
-            there_is_more=len(comments) > 4,
-        )
+    stk_logger(u_context, f"-> bp.scene.routes.fetch_comments n={len(comments)}")
+    return render_template(
+        "/scene/comments/fetch_comments.html",
+        comments=comments[0:4],
+        last_timestamp=last_timestamp,
+        there_is_more=len(comments) > 4,
+    )
 
 
 @bp.route("/scene/comments/add_comment", methods=["post"])

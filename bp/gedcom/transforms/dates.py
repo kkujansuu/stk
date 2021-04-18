@@ -101,10 +101,7 @@ lt = "\<"
 
 # regex helpers
 def p(**kwargs):
-    ret = ""
-    for name, pat in kwargs.items():
-        ret += f"(?P<{name}>{pat})"
-    return ret
+    return "".join(f"(?P<{name}>{pat})" for name, pat in kwargs.items())
 
 
 def optional(pat):
@@ -131,20 +128,21 @@ class Dates(transformer.Transformation):
         self.invalid_dates = defaultdict(list)
 
     def finish(self, options):
-        if self.invalid_dates:
-            print("<p><b>", _("Invalid dates:"), "</b><p>")
-            for date in sorted(self.invalid_dates):
-                linenums = self.invalid_dates[date]
-                links = []
-                for linenum in linenums:
-                    link = f"<a href=# class=gedcomlink>{linenum}</a>"
-                    links.append(link)
-                if len(links) > 10:
-                    links = links[0:10] + ["..."]
-                linkstr = ", ".join(links)
-                print(
-                    "", _("%(date)s (line %(linkstr)s)<br>", date=date, linkstr=linkstr)
-                )
+        if not self.invalid_dates:
+            return
+        print("<p><b>", _("Invalid dates:"), "</b><p>")
+        for date in sorted(self.invalid_dates):
+            linenums = self.invalid_dates[date]
+            links = []
+            for linenum in linenums:
+                link = f"<a href=# class=gedcomlink>{linenum}</a>"
+                links.append(link)
+            if len(links) > 10:
+                links = links[0:10] + ["..."]
+            linkstr = ", ".join(links)
+            print(
+                "", _("%(date)s (line %(linkstr)s)<br>", date=date, linkstr=linkstr)
+            )
 
     def transform(self, item, options, phase):
         """
@@ -248,11 +246,10 @@ class Dates(transformer.Transformation):
 
                 # 1888-99
                 r = match(value, y1=fourdigits, sep=dash, y2=twodigits)
-                if r:
-                    if int(r.y2) > int(r.y1[2:]):
-                        century = r.y1[0:2]
-                        item.value = f"FROM {r.y1} TO {century}{r.y2}"
-                        return item
+                if r and int(r.y2) > int(r.y1[2:]):
+                    century = r.y1[0:2]
+                    item.value = f"FROM {r.y1} TO {century}{r.y2}"
+                    return item
 
             if options.handle_intervals2:
                 # 1888-, >1888

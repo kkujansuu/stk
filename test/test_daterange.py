@@ -14,12 +14,10 @@ class Test(unittest.TestCase):
         """Check mid-month date order
         Test the adjacent days in range 1917-12-14...16 including missing day
         """
-        comp = 1963405
-        for s in ["1917-12-14", "1917-12-15", "1917-12", "1917-12-16"]:
+        for comp, s in enumerate(["1917-12-14", "1917-12-15", "1917-12", "1917-12-16"], start=1963405):
             #             print(" test day {}".format(s))
             val = DateRange.DateInt(s).value()
             self.assertEqual(val, comp, s)
-            comp += 1
 
     def testDateInt_month(self):
         """Check mid-year date order
