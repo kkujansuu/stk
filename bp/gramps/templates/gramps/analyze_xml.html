@@ -1,0 +1,33 @@
+{# _myapp/templates/gr_result.html_ #}
+{% extends "a_layout.html" %}
+{% block title %}{{ _("Gramps to Neo5j analyze") }}{% endblock %}
+{% block body %}
+    {{ super() }}
+<style>
+div.content > p {
+    margin: 0.5em 1em;
+}
+</style>
+	<h1>{{ _("Analyze of the Gramps XML") }}</h1>
+	{% if references %}
+		<div class="content">
+			<h2>{{ _("File") }} <i>{{file}}</i></h2>
+			<table>
+                <tr>
+   				    <th>{{ _("Objects ...") }}</th>
+   				    <th>{{ _("referring") }}</th>
+                </tr>
+				{% for line in references %}<tr>
+                    <td>{{line.number_of_individs}}
+                        {{ _(line.individ)|lower }} <!--{{ line.individ }}--></td>
+			        <td>{{line.number_of_references}}
+                        {{ _(line.reference)|lower }} <!--{{line.reference}}--></td>
+                </tr>{% endfor %}
+		    </table>
+        </div>
+	{% endif %}
+    <p>&rtrif; <a href="/gramps/uploads">{{ _("Return") }}</a></p>
+{% endblock %}
+</body>
+</html>
+

@@ -1,0 +1,77 @@
+{# _myapp/templates/person.html_ #}
+{% extends "a_layout.html" %}
+{% block title %}{{ _('Source Details') }}{% endblock %}
+{% block body %}
+{{ super() }}
+
+{% for e in events %}
+    <h1>{{ _('Event') }}</h1>
+    <ol id="itemlist">
+        <li class="itemrow">
+                <div class="col1">{{ _('Identifier') }}</div>
+                <div class="col2">{{e.uniq_id}}</div>
+        </li>
+        <li class="itemrow">
+                <div class="col1">{{ _("Type") }}</div>
+                <div class="col2">{{e.type}}</div>
+        </li>
+        <li class="itemrow">
+                <div class="col1">{{ _("Date") }}</div>
+                <div class="col2">{% if e.dates %}{{e.dates}}{% endif %}</div>
+        </li>
+    </ol>
+    
+    {% if e.citations %}
+    <h3>{{ _('References') }}</h3>
+    <ol class="num">
+        {% for c in e.citations %}
+        <li><div class="itemrow">
+                <div class="col1">{{ _('Identifier') }}<br />{{ _("Date") }}<br />{{ _("Page") }}<br />{{ _("Confidence") }}<br /><br /></div>
+                <div class="col3"><span class="id">{{c.uniq_id}}</span><br />
+                	{{c.dates}}<br />
+                	{{c.page}}<br />
+                    {{c.confidence}}<br /><br /></div>
+            </div>
+        </li>
+    </ol>
+    
+	    {% if c.sources %}
+	    <h3>{{ _('Sources') }}</h3>
+	    <ol class="num">
+	        {% for s in c.sources %}
+	        <li><div class="itemrow">
+	                <div class="col1">{{ _('Identifier') }}<br />{{ _("Stitle") }}<br />{{ _("Medium") }}<br /></div>
+	                <div class="col3"><span class="id">
+	                	<a href="/pick/source_uniq_id={{s.uniq_id}}">{{s.uniq_id}}</a></span><br />
+	                	{{s.stitle}}<br />
+	                	{{s.sauthor}}<br />
+	                	{{s.spubinfo}}<br />
+	                	{{s.reporef_medium}}<br /><br /></div>
+	            </div>
+	        </li>
+	    </ol>
+    
+		    {% if s.repositories %}
+		    <h3>{{ _('Repositories') }}</h3>
+		    <ol class="num">
+		      {% for repo in s.repositories %}
+		        <li><div class="itemrow">
+		                <div class="col1">{{ _('Identifier') }}<br />{{ _('Rname') }}<br />{{ _("Type") }}<br /><br /></div>
+		                <div class="col3"><span class="id">
+		                	<a href="/pick/repo_uniq_id={{repo.uniq_id}}">{{s.repository.uniq_id}}</a></span><br />
+		                	{{repo.rname}}<br />
+		                	{{repo.type}}<br /><br /></div>
+		            </div>
+		        </li>
+		      {% endfor %}
+		    </ol>
+    
+    		{% endif %}
+	        {% endfor %}
+    	{% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+    <p>&rtrif; <a href="javascript:history.back()">{{ _('Go back') }}</a></p>
+
+{% endblock %}

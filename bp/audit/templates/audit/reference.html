@@ -1,0 +1,50 @@
+{# templates/audit/reference.html_ #}
+{% extends "/audit/layout.html" %}
+{% block title %}{{ _('Logged on user') }}{% endblock %}
+{% block body %}
+{{ super() }}
+
+<div style="margin-left:50px; padding-bottom: 2em;">
+  <div>
+    <h1>{{ _('Handling reference materials') }}</h1>
+    <div class="row">
+
+          <div class="startbox admin">
+            <div style="display: inline-block;">
+               <h2>{{ _('Adding data') }}</h2>
+                 <form action="/audit/upload_csv" method="post"  enctype="multipart/form-data">
+	               <div style="display: inline-block;">
+	                 <input type="hidden" name="material" value="refnames">
+	                 <p>{{ _('Download reference names') }}</p>
+	                 <input type="file" name="filenm"><br>
+	                 <input type="checkbox" name="destroy" value="all">
+	                  <u>{{ _('Destroying <u>all former</u> and creating a unique index') }}
+	               </div>
+                   <div style="text-align:right;"> 
+	                 <input type="submit" value="{{ _('Upload') }}" />
+	               </div>
+                </form>
+            </div>
+        </div>
+
+       <div class="startbox admin">
+          <div style="display: inline-block;">
+			<h2>{{ _('Handling reference names') }}</h2>
+			<ul><li>{{ _('Listings') }} <i>TODO: fix</i></li>
+              <ul>
+	              <li><a href="/list/refnames">{{ _('List reference names') }}</a></li>
+	              <li><a href="/scene/persons/all/ref">{{ _('See people with reference names') }}</a></li>
+              </ul>
+			  <li><a href="/audit/set/refnames">{{ _('Set changed reference names for all people') }}</a>
+                  {{ _('After removal of all refnames') }}</li>
+              <li><a href="/refname_editor/">{{ _('Reference name Editor') }}</a></li>
+			  <li><a href="/audit/download/refnames">{{ _('Download reference names as a CSV file') }}</a></li>
+			</ul>
+          </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+	
+{% endblock %}

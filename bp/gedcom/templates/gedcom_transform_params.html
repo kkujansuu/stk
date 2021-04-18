@@ -1,0 +1,48 @@
+<script>
+var transform = "{{ transform }}";
+</script>
+
+<div style="display: inline-block;">
+    <h2>{{ transform_name }}: {{ _("transformation options") }}</h2>
+
+	<div>
+		<input type=hidden name=transform value='{{ transform }}'>
+		<table style="width:100%">
+		    <tr><th style="width:95%">{{ _("Setting") }}</th>
+		        <th style="width:5%">{{ _("Value") }}</th>
+		    </tr>
+		
+		{% for row in rows %}
+		    <tr>
+		    <td>{{ row.xxxname }} {% if row.help %}
+		      <span style="font-size: smaller;">{{ row.help }}</span>{% endif %}</td>
+		    <td>
+		    {% if row.type == "select" %}
+		    <select name='{{ row.name }}'>
+		       {% for choice in row.choices %}
+				   <option>{{ choice }}
+		       {% endfor %}
+		    </select>
+	        {% else %}
+		    <input type='{{ row.type }}' name='{{ row.name }}' 
+		    		class='{{ row.classname }}'
+ 					style="width: 10em" {{ row.checked }}>
+		        {% if row.action == 'append' %}
+		            <input type=button value="{{ _('Add') }}">
+		        {% endif %}
+		        {% if row.default %}<br />{{ _('Default') }} {{ row.default }}
+		        {% endif %}
+	       {% endif %}
+		    </td>
+		    </tr>
+		{% endfor %}
+		
+		{% if rows|length is gt(1) %}
+			<tr>
+				<td style="float:right"><span  class="check_all">{{ _("check all") }}</span></td>
+				<td><input type="checkbox" id="check_all" style="width: 10em"></td>
+			</tr>
+		{% endif %}
+		</table><div align="right" style="margin-top:1em">
+    </div>
+</div>

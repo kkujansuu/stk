@@ -1,0 +1,23 @@
+{# _myapp/templates/virhe_lataus.html_ #}
+{% extends "a_layout.html" %}
+{% block title %}{{ _('Failed to load') }}{% endblock %}
+{% block body %}
+    {{ super() }}
+    <h1>
+    {% if code == 1 %}
+        {{ _('Invalid input file') }}
+    {% elif code == 2 %}
+        {{ _('No permission') }}
+    {% elif code == 415 %}
+        {{ _('Unable to load file') }}
+    {% else %}
+        {{ _('Unable to load file, code =') }}{{code}}
+    {% endif %}
+    </h1>
+    {% if text %}
+    <p>{{text}}</p>
+    {% endif %}
+    <p>&rtrif; <a href="javascript:history.back()">{{ _('Go back') }}</a>
+    <br>&rtrif; <a href="/">{{ _('Back to Front Page') }}</a></p>
+{% endblock %}
+

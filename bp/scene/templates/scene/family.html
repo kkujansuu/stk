@@ -1,0 +1,145 @@
+{# _templates/scene/person_pg.html_ #}
+{% extends "/scene/sc_layout.html" %}
+{% block title %}{{ _("Family details") }}{% endblock %}
+{% block body %}
+{{ super() }}
+{% import '/scene/macros.html' as macro with context %}
+<style>
+u { color: DarkKhaki; text-decoration: none; }
+table {margin-top:1em;}
+td { padding-right:1em;}
+.source-flex { display: flex; }
+.source-flex > div {padding: 0 0 0 1em; }
+</style>
+
+<div id="startdiv">
+    <h1>{{ _("Family details") }}</h1>
+    <div>{{ macro.show_use_case(no_change=true) }}</div>
+</div>
+
+{{ macro.menu(menuno) }}
+    <div class="content" id="IndividualDetail">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul  class='flashes'>
+        {% for category, message in messages %}
+          <li class='flash_{{category}}'>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+{% if family %}
+        <h2>{{ _("Family")|capitalize }}</h2>
+        <div id="summaryarea">
+            <table><tbody>
+                <tr><td class="ColumnAttribute">{{ _("Identifiers") }}</td>
+                    <td class="Value TwoRows" colspan="2">{{macro.all_obj_ids(family)}}</td>
+                    <td></td>
+                </tr>
+                <tr><td class="ColumnAttribute">{{ _("Relation") }}</td>
+                    <td class="Value"> {{ family.rel_type|transl('marr') }}</td>
+                    <td>{{ family.dates }}</td>
+                </tr>
+            {% for p in [family.father, family.mother] %}
+                {% if p %}
+                <tr><td class="ColumnAttribute">&nbsp;–&nbsp;{{p.role|transl('role')|capitalize}}</td>
+                    <td class="Value">{{ macro.person_anon(p, uuid) }}</td>
+                    <td class="Value">
+                   {% if p.event_birth and p.event_birth.dates %}&star;{{ p.event_birth.dates }}{% endif %}
+                   {% if p.event_death and p.event_death.dates %}&#x271D;{{ p.event_death.dates }}{% endif %}
+                    </td>
+                </tr>
+                {% endif -%}
+            {% endfor %}
+            </tbody></table>
+        </div>
+
+	<form>
+		<input type="hidden" name="uniq_id" value="{{ family.uniq_id }}">
+	</form>
+	<div id="comments_div" hx-get="/scene/comments/comments_header" hx-trigger="load"></div> 
+
+    {% if family.events %} 
+        <h3>{{ _("Family Events") }}</h3>
+        <div id="summaryarea">
+            <table><tbody>
+        {% for e in family.events|sort(attribute='dates') %}
+                <tr><td class="ColumnAttribute">{{e.type|transl('evt')|capitalize}}</td>
+                    <td class="ColumnDate">{{e.dates}}</td>
+                    <td class="ColumnPlace">
+                    <a href="/scene/location/uuid={{e.place.uuid}}" class="inlink"
+                       title="{{ _('of type') }} {{e.place.type}}; {{ _('see details of place') }}">
+                      {{macro.place_names_lang(e.place)}}
+            </a>{% if e.place.uppers %},
+		              <small>{{macro.place_names_lang(e.place.uppers[0])}}</small>
+		    {% endif %}
+		          </td>
+                </tr>
+        {% endfor %}
+
+        {% if family.sources %}
+                <tr><td colspan="3">&nbsp;</td></tr>
+                <tr><td class="ColumnAttribute"><b>{{ _('Sources') }}</b></td>
+                    <td class="Value" colspan="2"><ul>
+            {% for s in family.sources %}
+                        <li><a href="/scene/source?uuid={{s.uuid}}" class="inlink">{{s.stitle}}</a>, 
+                {% for c in s.citations %}
+                            {{ _("Page") }}: {{c.page}}
+                {% endfor -%}
+                {% for repo in s.repositories %}
+                            <br>&nbsp;&nbsp; – {% if repo.medium %}{{repo.medium|transl('medium')}}{% endif %}</span>
+                            {{ _('in the repository') }} <b>{{repo.rname}}</b>
+                {% endfor -%}
+                        </li>
+            {% endfor -%}
+                    </ul></td>
+        {% endif -%}
+                </tr>
+            </tbody></table>
+
+      </div> <!-- events -->
+    {% endif %}
+
+    {% if family.children %} 
+	        <h3>{{ _("Children") }}</h3>
+	        <div id="summaryarea">
+	            <table style="margin-top:1em;"><tbody>
+	        <!-- |sort(attribute='event_birth.dates') -->
+	        {% for p in family.children %}
+	                <tr><td class="ColumnAttribute">{{p.sex|transl('child')}}</td>
+	                    <td class="Value">{{ macro.person(p, uuid) }}</td>
+	                    <td class="Value">
+               {% if p.event_birth and p.event_birth.dates %}&star;{{ p.event_birth.dates }}{% endif %}
+	           {% if p.event_death and p.event_death.dates %}&#x271D;{{ p.event_death.dates }}{% endif %}
+	                    </td>
+	                </tr>
+	        {% endfor %}
+	            </tbody></table>
+	    	{% if family.num_hidden_children %}
+		        <table>
+		        	<tr><td class="Value">
+			        	({{ _("hidden") }}: {{ family.num_hidden_children }}) 
+		    	</table>
+	    	{% endif %}
+ 			</div>
+    {% endif %}
+ 
+    {% if family.notes %}
+            <h2>{{ _("Notes") }}</h2>
+            <div id="summaryarea">
+                <table>
+            {% for n in family.notes %}
+ 				   <tr>{% if n.text %}<td>{{ n.text }}</p></td>{% endif %}
+ 				{% if n.url %}<td><a href="{{ n.url }}">{{ n.url }}</a></td>{% endif %}</tr>
+            {% endfor %}
+                </table>
+            </div>
+    {% endif %}
+{% endif %}
+        <p>&nbsp;</p> <!-- family -->
+    </div>
+</div>
+{% endblock %}
+

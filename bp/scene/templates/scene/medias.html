@@ -1,0 +1,126 @@
+{# /scene/templates/scene/medias.html_ #}
+{% extends "/scene/sc_layout.html" %}
+{% block title %}{{ _('List of medias') }} (scenemedias){% endblock %}
+{% block body %}
+{{ super() }}
+{% import '/scene/macros.html' as macro with context %}
+<script src="/static/infobox.js"></script>
+
+{% set cnt = medias|count %}
+{% set next_fw = user_context.next_name('fw') %}
+{% set next_bw = user_context.next_name('bw') %}
+
+{# set next_at_end = user_context.at_end()
+<p>next fb = "{{next_bw}}", fw = "{{next_fw}}"; 
+   at start = "{{user_context.at_start() }}", at end = "{{user_context.at_end() }}"</p>
+#}
+
+<div id="startdiv">
+	<h1>{{ _('List of Medias') }}</h1>
+    <div>{{ macro.show_use_case() }}</div>
+</div>
+
+{{ macro.menu(6) }}
+    <div class="content" id="Medias">
+        <div id="summaryarea">
+            <div class="flex-container">
+               <div id="description_box">
+                   <p>{{ _('Displaying %(num)s distinct medias', num=cnt) }}
+	{% if user_context.at_start() %}
+	         		  {{ _('from begin') }}.
+	{% else %}		  {{ _('starting <tt>%(name)s</tt>', name=next_bw) }}.
+	{% endif %}
+                   </p>
+	           </div>
+	           <div class="SearchBox">
+	               <form action="/scene/medias">
+	                 <fieldset>
+	                    <input type="hidden" name="c" value="50" >
+	                    <label for="fw">{{ _('Go to') }}</label>
+	                    <input type="text" name="fw" size="8" 
+	                     title="{{ _('First letters of media') }}" 
+	                     placeholder="{{ _('Title') }}">
+	                    <input type="submit" value=" > ">
+	                 </fieldset>
+	               </form>
+	           </div>
+            </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+            <div><ul class='flashes'>
+        {% for category, message in messages %}
+                  <li class='flash_{{category}}'>{{ message }}</li>
+        {% endfor %}
+            </ul></div>
+      {% endif %}
+    {% endwith %}
+        </div> {# summaryarea #}
+
+        {% set last = medias|last %}
+        <div id="alphanav">{% set alpha = "¤" %}
+            <ul>
+				{{ macro.buttons_bw(user_context, "/scene/medias") }}
+				{{ macro.buttons_fw(user_context, "/scene/medias") }}
+            </ul>
+        </div>
+
+<section id="lista">
+
+  <table id="medias">
+    <tr><th>{{ _("Title") }}</th>
+        <th style="text-align: center;">{{ _("Picture") }}</th>
+        <th>{{ _("References") }}</th>
+    {% if user_context.is_auditor %}
+        <th class="Auditor" title="{{ _('For auditor only') }}">{{ _('User Batch') }} &nbsp;</th>
+    {% endif %}
+    </tr>
+{% if cnt %}
+    {% for m in medias %}
+        <tr>
+            <td><a href="/scene/media?uuid={{m.uuid}}" class="inlink"
+                   title="{{ _('Go to media page') }}">{{ m.description }}</a>
+                <br><span class="id" title="{{ _('Original ID') }}">{{m.id}}</span> 
+                <span class="idno" title="{{ _('Key') }}">{{m.uniq_id}}</span>
+            </td>
+            <td style=" margin-left: auto; margin-right: auto;">
+                <div style="text-align: center;">
+	                <a href="/scene/media?uuid={{m.uuid}}"
+	                   title="{{ _('Go to media page') }}">
+	                   <img alt="({{ _('Photo') }})" 
+	                     src="/scene/thumbnail?id={{m.uuid}}" 
+	                     title="key = {{m.uuid_str()}}"/>
+	                </a>
+            </div></td>
+            <td align="center">{{m.conn}}</td>
+
+       {% if user_context.is_auditor %}
+            <td class="Auditor"><i>{{m.credit}}</i><br>{{m.batch}}</td>
+       {% endif %}
+        </tr>
+    {% endfor %}
+
+    {% if next_fw == None or next_at_end %}
+        <tr><td colspan="4" id="lastitem_badge">
+                <i>{{ _('The last item found') }}</i>
+            </td>
+        </tr>
+    {% endif %}
+
+{% else %}
+	    <tr><td colspan="4">
+		  <div class="NotFound">
+    {% if next_bw %}
+		      <p>{{ _('No media found starting from "%(name)s"', name=next_bw) }}.</p>
+		      <p>&nbsp;&#9656; <a href="/scene/medias?fw=%20" 
+		          title="{{ _('first page') }}">{{ _("Go to the first media") }}</a></p>
+    {% else %}
+              <p>{{ _('No medias found') }}.</p>
+    {% endif %}
+		  </div></td>
+	    </tr>
+{% endif %}
+  </table>
+</section>
+
+{% endblock %}

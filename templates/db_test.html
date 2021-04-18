@@ -1,0 +1,12 @@
+{# _myapp/templates/db_test.html_ #}
+{% extends "a_layout.html" %}
+{% block title %}{{ _('Result of processing') }}{% endblock %}
+{% block body %}
+    {{ super() }}
+    <h1>{{ _('Success of database processing') }}</h1>
+    <pre>
+{{text}}
+    </pre>
+    <p>&rtrif; <a href="javascript:history.back()">{{ _('Go back') }}</a></p>
+{% endblock %}
+

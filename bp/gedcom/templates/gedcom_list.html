@@ -1,0 +1,58 @@
+{# templates/gedcoms.html_ #}
+{% extends "g_layout.html" %}
+{% include "security/_messages.html" %}
+{% block title %}{{ _('Gedcom tools') }}{% endblock %}
+{% block body %}
+{{ super() }}
+
+<script>
+var maxsize = {{ maxsize }};  // to be used in gedcom_scripts.js
+</script>
+
+<script src="/static/js/gedcom_scripts.js"></script>
+
+<div style="margin-left:50px; padding-bottom: 2em;">
+  <div>
+    <h1>{{ _("Gedcom tools") }} ({{ _("user") }}: {{ user }})</h1>
+    <div class="row">
+    
+        <div class="startbox2"> 
+	            <h2>{{ _("Select your file for processing") }}</h2> 
+				<div>
+				    <table>
+					    {% for file in files %}
+						    <tr>
+						    <td class="gedcom-name">
+						    <a href="/gedcom/info/{{ file.name|escape }}">{{ file.name }}</a></td>
+						    <td>{{ file.metadata.desc|escape }}</td>
+						    </tr>
+					    {% endfor %}
+					</table>
+				</div>
+		</div>
+
+	    <div class="startbox">
+	            <h2>{{ _("Upload a new GEDCOM file") }}</h2>
+				<div>
+				    <!-- form id="upload_form" method="post" enctype="multipart/form-data" action="/gedcom/upload" -->
+				    <form id="upload_form" method="post" enctype="multipart/form-data">
+				      <div>
+				        <input type="file" name="file" id="file" accept="{{ allowed_extensions }}">
+				      </div>
+				      <div><label for="desc">{{ _("Description") }}</label>
+				           <input name="desc" style="width: 14em"></div>
+				      <div class="submit">
+				        <input type="button" id="upload" value="{{ _('Upload') }}">
+				      </div>
+				    </form>
+				</div>
+	    </div>
+
+	</div>
+	<div>&rtrif; <a href="/">{{ _("Return main page") }}</a></div>
+  </div>
+</div>
+<div id="waiter" class="modal"></div>	
+{% endblock %}
+
+

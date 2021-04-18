@@ -1,0 +1,1132 @@
+/*
+    Isotammi Genealogical Service for combining multiple researchers' results.
+    Created in co-operation with the Genealogical Society of Finland.
+    Copyright (C) 2016-2021  Juha Mäkeläinen, Jorma Haapasalo, Kari Kujansuu, 
+                             Timo Nallikari, Pekka Valta
+
+    Adapted a GRAMPS stylesheets from <http://gramps-project.org/>.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+**************************************************************************************************
+GRAMPS Copyright Holder and License
+**************************************************************************************************
+GRAMPS Cascading Style Sheet
+Style Name: Basic-Ash Stylesheet
+Style Author: Jason M. Simanek (2008)
+Note: Adapted from GRAMPS original Modern Style stylesheet
+Copyright 2008 Jason M. Simanek
+Copyright 2009 Stephane Charette
+Copyright (C) 2008-2011 Rob G. Healey <robhealey1@gmail.com>
+Copyright 2011 Michiel D. Nauta
+
+GRAMPS is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2 of the License.
+*/
+
+/*------------------------------------------------------------------------------------------------
+Color Palette
+--------------------------------------------------------------------------------------------------
+
+black                   #000
+gray dark               #555
+gray                    #999
+gray light              #CCC
+gray very light         #EEE
+white                   #FFF
+dark blue               #006
+Auditor					DarkGreen
+--------------------------------------------------------------------------------------------------
+Characteristic of this style is that it uses the full width of the browser
+window and that horizontal highlighting bars extend over the full width of
+the page.
+--------------------------------------------------------------------------------------------------
+# $Id$
+
+ NarrativeWeb Styles
+------------------------------------------------------------------------------------------------ 
+
+ General Elements
+----------------------------------------------------- */
+
+body {
+    font-family: sans-serif;
+    font-size: 90%;
+    color: black;
+    margin: 0px;
+    background-color: #EEE;
+}
+h2 {font-size: large;
+}
+body > div {
+    clear: both;
+}
+
+#startdiv {
+    margin-left:50px;
+    margin-bottom:1em;
+}
+#startdiv h1 {margin-bottom: 0;}
+/* Selected user case (material), right from h1 title */
+#startdiv div {
+	font-size: 90%;
+	color: gray;
+    background-color: #f5f5f5;
+    padding: 1px 2px;
+	position: absolute;
+	right: .5em;
+    top: 3.5em;
+}
+#startdiv div i a {
+	color: gray;
+	text-decoration-line: underline;
+}
+
+.content {
+    background-color: white;
+    border-top: solid 1px #999;
+}
+.content div.snapshot {
+    float: right;
+    margin: 2em 2em 0 2em;
+}
+.content div.credit {
+    position: relative;
+    top: -2.5em;
+	text-align: right;
+    padding: 5px;
+    color: #7e6b53;
+    font-size: 8pt;
+    height: 0;
+}
+
+.fullclear {
+    clear: both;
+}
+
+/* Stk header
+----------------------------------------------------- */
+div#Header {
+    position: relative;
+    color: #7e6b53; /* Darker bisque */
+    background-color:bisque;
+    font-family: Georgia, "Times New Roman", times;
+    font-size: 13pt;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 2px;
+    width: 100%;
+    margin: 13px 0;
+}
+div#Header.own    { border-bottom: solid 3pt #e0bc91; }
+div#Header.passed { border-bottom: solid 2pt #6884be; }
+
+div#Header div.curr_user {
+    float: right; 
+    margin-right: 30px; 
+    font-family: verdana, sans-serif;
+    font-weight: normal; 
+    font-size: 9pt;
+    padding: 4px;
+}
+div#Header div.curr_user a { 
+    text-decoration: none;     
+    color: #7e6b53; /* Darker bisque */
+}
+div#Header div.curr_user a:hover { text-decoration: underline; }
+
+img#logo {
+    width: 43px;
+    height: 44px;
+    float: left;
+    margin: -5px 5px 0 5px;
+    vertical-align: text-top;
+}
+
+/* Stk objects
+----------------------------------------------------- */
+.gedcom_id { color: sienna; text-align: right; 
+    font-family: monospace
+}
+.id { color: sienna; font-size: 80%; text-align: right; 
+    font-family: serif
+}
+.idno { color: gray; text-align:center; 
+    font-family: monospace
+}
+#changetime { 
+	display: block;
+    position: absolute;
+    /*right: 0;*/
+	color: gray; font-size: 80%;
+}
+.owner { color: white; 
+    font-size: 70%; 
+    background: RoyalBlue;
+    border-radius: 5px;
+}
+.notmy {color:blue;}
+.Auditor { color:DarkGreen; } # Only for Auditor's eyes
+
+.detail_link {
+	display: inline;
+}
+.no_detail {
+	display: inline; 
+	color: lightslategray;
+}
+li.minor { list-style-type: circle; }
+li.major { list-style-type: square; }
+.inlink { color: #006; background: LemonChiffon; }
+.outlink { text-decoration: underline; color:gray}
+.refname { color:gray; font-size: 80%; }
+.dimmed { color: #555; font-style: italic;  font-size: 80%; }
+.note  { font-style: italic; }
+.myself {
+	color: white;
+	background: #555;
+	font-style: italic;
+	padding: 0 .5em 0 .3em;
+	border-radius: 5px;
+}
+td.numbers {
+    text-align: right;
+    padding-right: 2em;
+}
+td.ColumnEvent ul li i {
+	color: #006;
+}
+.typedesc {
+    font-variant: small-caps;
+    text-transform: uppercase;
+    font-size: 84%;
+}
+.langcode {
+    font-variant: small-caps;
+    text-transform: uppercase;
+    font-size: 84%;
+    color: darkslategray;
+}
+
+div.NotFound {
+	margin: 1em;
+	background: linen;
+	padding: 1em;
+	border: maroon solid 1pt;
+}
+div.Failed {
+    padding: 1em;
+	text-align: center;
+	font-size: large;
+    font-style: italic;
+}
+/* Button style link (Next - Previous) */
+.navbar { text-align: center; 
+  background-color: #EEE;
+}
+.navlink, a.navlink:link, a.navlink:visited {
+  background-color: lightgray;
+  border: 1pt solid black;
+  border-radius: 10px;
+  color: black;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin-left:4px;
+}
+a.navlink:hover, a.navlink:active {
+  background-color: gray;
+}
+.navlink {
+  background-color: white;
+  color: gray;
+  border-color: gray;
+}
+/* Login badge with 'scene' menu tabs */
+#loginpadge {
+	border:1px dotted darkred;
+	background:white;
+	border-radius:5px;
+	margin-left:3em;
+}
+#loginpadge.a {
+	padding:3px;
+	margin:1px;
+	color:darkred;
+}
+.submit { text-align:right; }
+
+/* Flexbox boxes floats next to each other */
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.flex-container > div {
+  background-color: ivory;
+  width: 300px;
+  margin: 1em;
+}
+.flex-container2 {
+  display: flex;
+/*   width: 350px; */
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.flex-container2 > div {
+  margin: 1em;
+}
+.description_box2 {
+    width: 320px;
+}
+.SearchBox2 {
+    background: bisque;
+    margin: 1em;
+    border: 1px solid #CCC;
+    padding: 5px;
+    padding: 5px;
+    width: 320px !important;
+    min-width: 200px;
+    max-width: 430px;
+}
+.SearchBox2 fieldset {
+    border: 1px solid gray;
+    margin-bottom: .5em;
+}
+
+/* Styles with icon  */
+
+.icon::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+.outlink {
+    text-decoration: none;
+    color: maroon;
+    background: bisque;
+    padding-right: 5px;
+    padding-left: 5px;
+    white-space:nowrap;
+}
+.outlink::before {
+    content: "🔗 ";  
+}
+
+#lastitem_badge {
+    text-align: center;
+    padding: 1em;
+}
+#lastitem_badge > i {
+    background-color:#999; 
+    padding:3px 30px 3px 30px; 
+    color:white; 
+    border-radius:15px;
+}
+
+
+/* General Text
+----------------------------------------------------- */
+h1 {
+    font-size: 22px;
+    font-weight: bold;
+    padding-left: 15px;
+}
+h2 {
+    font-size: 18px;
+    padding-left: 15px;
+}
+h3 {
+    font-size: 16px;
+  /*background-color: #CCC;*/
+    padding-left: 15px;
+    margin-bottom: 0.5em; /*0px;*/
+    border-bottom: solid 2px #999;
+}
+
+.sticky {
+    position: sticky; 
+    top: 0;
+    background-color: white;
+    max-width: max-content;
+}
+p#description {
+    padding-left: 15px;
+}
+div#description_box {
+    width: 450px;
+}
+div#noteContent {
+    padding: 1em 0 0 3.5em;
+    text-indent: -1.5em;
+    display: none;
+}
+div#noteContent p.nodesTitle {
+	font-weight: bold;
+    padding-bottom: 3px;
+}
+a {
+    color: black;
+    text-decoration: none;
+}
+a[href]:hover, a[href]:active {
+    text-decoration: underline;
+}
+.grampsid {
+    font-family: monospace;
+    font-size: smaller;
+    color: #999;
+}
+
+/* Header from Gramps, flashes
+----------------------------------------------------- */
+#SiteTitle {
+    color: #555;
+}
+#user_header, #user_footer {
+    padding-left: 15px;
+}
+
+.flashes {
+    color: darkblue;
+    border: solid 2pt #c9ac45;
+    background-color: #f9e9a3;
+    margin: 3em;
+    padding: 2em;
+    max-width: 40em;
+}
+.flash_error { color: red }
+.flash_warning { color: blueviolet }
+.flash_message { color: blue }
+
+
+/* Navigation
+----------------------------------------------------- */
+div#nav, #subnavigation {
+    border: solid 1px #EEE; /* needed by IE7 */
+}
+#subnavigation ul {
+    overflow: hidden;
+}
+div#nav ul, #subnavigation ul {
+    list-style: none;
+    margin: 0px;
+    padding-left: 15px;
+}
+#subnavigation ul {
+    border-bottom: solid 1px #999;
+}
+div#nav ul li, #subnavigation ul li {
+    float: left;
+}
+div#nav ul li a, #subnavigation ul li a {
+    display: block;
+    font-size: smaller;
+    font-weight: bold;
+    padding: 5px;
+    border-bottom: solid 1px #EEE;
+}
+div#nav ul li a:hover, #subnavigation ul li a:hover {
+    text-decoration: none;
+    background-color: #CCC;
+    border-bottom: solid 1px black;
+}
+div#nav ul li.CurrentSection a {
+    position: relative;
+    top: 1px;
+    border: solid 1px #999;
+    border-bottom-style: none;
+    background-color: white;
+}
+#subnavigation ul li.CurrentSection a {
+    background-color: white;
+}
+
+/* Alphabet Navigation
+----------------------------------------------------- */
+div#alphanav {
+    background-color: #EEE;
+    position: sticky; top: 0;  /* Stk/JMä */
+    z-index: 2;
+    opacity: .7;
+}
+div#alphanav ul {
+    list-style: none;
+    border-width: 2px 0px 4px 0px;
+    border-style: solid;
+    border-color: black;
+    margin: 0px;
+    padding-left: 15px;
+    /* float container stretch, see www.quirksmode.org/css/clearing.html */
+    overflow: hidden;
+}
+div#alphanav ul li {
+    float: left;
+    margin: 1pt;
+    font-weight: bold;
+    background-color: #f3f3f3;
+    border-radius: 8px 8px 0 0;
+}
+div#alphanav ul li.title {
+	padding: 6pt;
+	margin-left: 8pt;
+	border-left: solid black 1pt;
+}
+div#alphanav ul li a, div#alphanav ul li span {
+    display: block;
+    padding: 4px 8px;
+    line-height: 100%;
+    float: left;
+    margin: 2pt 0;
+/*  border-radius: 9pt; */
+}
+div#alphanav ul li a:hover {
+    text-decoration: none;
+    background-color: black;
+    color: white;
+}
+
+/* Main Table
+----------------------------------------------------- */
+table {
+    border-collapse: collapse;
+    /* width: 100%; */
+}
+div#summaryarea > table.infolist,
+div#parents > table.infolist,
+h3 + table.infolist {
+    width: auto;
+    margin: 0 5px;
+}
+div#summaryarea { /* "> p" removed 21.5.2020/JMä */
+	margin:.5em .5em .5em 2em;
+}
+table tr th {
+    text-align: left;
+    background-color: #EEE;
+  /*border-top: solid 1px #999;*/
+    border-bottom: solid 1px #999;
+}
+/*
+table tr th:first-child {
+    border-left: solid 1px #999;
+}
+table tr th:last-child {
+    border-right: solid 1px #999;
+}
+/*
+table.primobjlist tr th {
+    background-color: #CCC;
+}
+*/
+table td, table th {
+    vertical-align: top;
+    padding-left: 1ex;
+}
+table.primobjlist td {
+    vertical-align: middle;
+}
+table td:first-child, table th:first-child {
+    padding-left: 15px;
+}
+table.primobjlist tr a {
+    display: block; /* make whole td clickable */
+}
+table.primobjlist tr.BeginLetter td, table.primobjlist tr.BeginSurname td {
+    border-top: solid 1px #CCC;
+}
+td.ColumnLetter, td.ColumnRowLabel {
+    font-weight: bold;
+}
+td.ColumnSources {
+    text-align: center;
+}
+td.ColumnBirth, td.ColumnDeath, td.ColumnPartner, td.ColumnParents {
+    font-size: 90%;
+}
+td.ColumnFamily { /* Space for leading arrow */
+	text-indent: -1em;
+}
+table.infolist tr td ol {
+    margin: 0 4px;
+}
+
+#summaryarea table.infolist td.ColumnAttribute,
+#parents table.infolist td.ColumnAttribute,
+#families table.infolist td.ColumnType,
+#families table.infolist td.ColumnAttribute {
+    color: #555;
+}
+h3 + table.infolist td.ColumnAttribute {
+    color: #555;
+}
+table.primobjlist td.ColumnParents span.mother:before {
+    content: "+ ";
+}
+td.Value > ul { 
+    margin:0; 
+    padding-left:0; 
+    list-style: none;
+}
+td.Value > ul > li {
+	padding: 0 0 .5em 0;
+	margin-left: 1em;
+}
+td.Value > ul li:before {
+  content: '►';
+/*   padding-right: .5em; */
+  margin-left: -1em;
+}
+.TwoRows { height:2.5em }
+
+/* Surnames
+----------------------------------------------------- */
+table#SortByName td.ColumnSurname, table#SortByName th.ColumnSurname,
+table#SortByCount td.ColumnQuantity, table#SortByCount th.ColumnQuantity {
+    background-color: #EEE;
+}
+table#SortByName thead th.ColumnSurname a:after,
+table#SortByCount thead th.ColumnQuantity a:after {
+    content: " \2193";
+}
+table.surname td.ColumnName {
+    background-color: #EEE;
+}
+
+/* Individuals
+----------------------------------------------------- */
+td.ColumnAlpha {
+    background-color: #EEE;
+    font-weight: bold;
+    font-size: larger;
+}
+table.IndividualList td.ColumnSurname  {
+    background-color: #EEE;
+}
+td.ColumnPerson div { 
+    margin: 2px;
+}
+td.ColumnEvent ul {
+	margin: 2px;
+	padding-left: 1em;
+}
+table.IndividualList tr:nth-child(even),
+table.infolist.eventlist tbody tr:nth-child(even)
+    {background-color: #f2f2f2}
+ul.eventnotes { 
+	list-style-position: outside;
+	padding-left: 1em;
+	margin: 0.2em; 
+}
+/* Places
+----------------------------------------------------- */
+#Places table.infolist td.ColumnName {
+    background-color: #EEE;
+}
+#map {
+    float: right;
+    width: 250px;
+    height: 300px;
+    margin: 2em;
+    padding: 1em;
+    border: 1px solid lightgray;
+    border-right: 4px solid lightgray;
+    border-bottom: 4px solid lightgray;
+    background: LightYellow;
+    font-size: 60%;
+}
+
+/* Events
+----------------------------------------------------- */
+@media only screen and (min-width: 500px) {
+	table.infolist.eventlist {  /* JMä 26.11.2017 */
+        min-width: 500px;
+    }
+}
+
+/* For person list events column */
+.eventgrid {  display: flex; }
+.eventgrid .col { float: left; }
+.eventgrid .col.col_event { width: 15em; }
+.eventgrid .col.col_event span {
+    font-style: italic;
+    color: #006;
+}
+.eventgrid .col.col_date { width: 60%; }
+.major { font-weight: bold; }
+
+#EventList table.infolist tr.BeginType td {
+    border-top:dashed 1px #CCC;
+}
+#EventList table.infolist tr.BeginLetter td {
+    border-top:solid 1px #CCC;
+}
+#EventList table.infolist td.ColumnType {
+    background-color: #EEE;
+}
+#EventList td.ColumnPerson a {
+    display: inline;
+}
+#EventList td.ColumnPerson span.person:after,
+#EventList td.ColumnPerson span.father:after,
+#EventList td.ColumnPerson span.mother:after,
+#EventDetail td.ColumnPerson span.person:after,
+#EventDetail td.ColumnPerson span.father:after,
+#EventDetail td.ColumnPerson span.mother:after {
+    content: ", ";
+}
+#EventList td.ColumnPerson span.fatherNmother:after,
+#EventDetail td.ColumnPerson span.fatherNmother:after {
+    content: " + ";
+}
+#EventList td.ColumnPerson span.person:last-child:after,
+#EventList td.ColumnPerson span.father:last-child:after,
+#EventList td.ColumnPerson span.mother:last-child:after,
+#EventDetail td.ColumnPerson span.person:last-child:after,
+#EventDetail td.ColumnPerson span.father:last-child:after,
+#EventDetail td.ColumnPerson span.mother:last-child:after {
+    content: "";
+}
+
+/* Gallery
+----------------------------------------------------- */
+#GalleryNav {
+    text-align: center;
+    margin: 2em 0px;
+}
+#GalleryNav a {
+    font-weight: bold;
+    background-color: #EEE;
+    border: solid 1px #999;
+    margin: 1em;
+}
+#GalleryNav a#Previous {
+    padding: .4em .7em .3em .7em;
+}
+#GalleryNav a#Next {
+    padding: .4em 1.9em .3em 1.9em;
+}
+#GalleryCurrent {
+    font-size: larger;
+}
+#GalleryTotal {
+    font-weight: normal;
+}
+#GalleryDisplay {
+    margin: 0px auto;
+    position: relative;
+}
+#GalleryDisplay img {
+    margin: 0px auto;
+    display: block;
+    border: solid 1px #999;
+}
+#GalleryDetail h3 {
+    text-align: center;
+}
+
+/*    Sources and Citations list
+------------------------------------------------------ */
+div.sourceDesc { 
+	margin: .5em 3em; 
+    text-indent: -1.3em;
+	}
+div.sourceDesc::before {
+    content: "►";   /* BLACK RIGHT-POINTING POINTER */
+}
+
+div.sourceDesc div.citaDesc {
+    margin-left: 4em;
+    text-indent: -1.7em;
+}
+
+/*	div#SourceDetail {
+	    margin: 0 auto;
+	}
+	
+	td.CitationId { 
+		width: 4em;
+		padding-top: 5pt; 
+	    color: gray;
+	    font-size: 75%;
+	}
+	td.Citation { padding:4px; }
+*/
+
+/* Contact
+----------------------------------------------------- */
+#Contact {
+    overflow: hidden;
+}
+#Contact #summaryarea {
+    width: 50em;
+    margin: 2em auto;
+    padding: 3em;
+    background-color: #EEE;
+    border: solid 1px #999;
+}
+#Contact img {
+    float: right;
+    border: solid 1px #999;
+}
+#Contact #researcher, #Contact #researcher h3 {
+    font-size: larger;
+    padding-left: 0px;
+}
+#Contact #streetaddress, #Contact #locality, #Contact #email {
+    display: block;
+}
+#Contact #city:after {
+    content: ",";
+}
+
+/* Download
+----------------------------------------------------- */
+#Download table.download a {
+    display: block;
+}
+
+/* Subsection
+----------------------------------------------------- */
+#Home, #Introduction {
+    overflow: hidden;
+}
+#Home img, #Introduction img {
+    float: right;
+    margin: 1em;
+    max-width: 950px;
+}
+#Home p, #Introduction p {
+    padding-left: 15px;
+}
+.subsection {
+    clear: both;
+    overflow: hidden;
+}
+.subsection p {
+    margin: 0px;
+}
+
+/* Subsection : Families
+----------------------------------------------------- */
+div#families table.fixed_subtables table.eventlist {
+    table-layout: fixed;
+}
+div#families table.fixed_subtables table.eventlist th:first-child {
+    width: 9em;
+}
+div#families table.fixed_subtables table.eventlist th:last-child {
+    width: 5em;
+}
+div#families table.attrlist td.ColumnType {
+    color: black;
+}
+/* Stk 4.10.2017..2021 JMä */
+.personbox {border: 1px solid black;
+    align-content: center;
+    border-radius: 10px;
+    background: beige;
+    padding: 10px; 
+    align-self: flex-start;
+    width: 200px;
+    margin: 1em;
+    font-size: 90%;
+  /*flex: 50%;*/
+}
+.familybox {
+	width: 350px;
+	border: 1px solid gray; 
+    border-radius: 10px;
+    background: bisque;
+    flex-wrap: wrap;
+    align-self: flex-start;
+    font-size: 90%;
+    margin: 10px;
+  /*flex: 50%;*/
+}
+.familybox p { padding-left: 1em; padding-top: 1em; }
+.familybox ul li ul { padding-left: 1.5em; }
+
+.groupbox {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin: auto;
+}
+.mainbox {
+    padding-left: 1em;
+    padding-top: 1em;
+    flex: 50%
+}
+
+.row {
+    display: inline-flex
+}
+.column {
+    flex: 50%
+}
+
+/* Subsection : Gallery
+----------------------------------------------------- */
+#indivgallery .thumbnail {
+    float: left;
+    max-width: 130px;
+ /* max-height: 150px; */
+    font-size: smaller;
+    text-align: center;
+    margin: 0.8em 0.5em;
+}
+div.thumbnail div a img {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: .5em;
+}
+#indivgallery > div.thumbnail {
+    margin-left: 15px;
+    border: solid lightgray 1px; 
+    padding: 5px; 
+    text-align: center;
+}
+div.thumbnail > p {
+	color: gray;
+	word-wrap: break-word;
+}
+#indivgallery img {
+    border: solid 1px #999;
+}
+
+/* Subsection : Notes (Narrative)
+----------------------------------------------------- */
+div.grampsstylednote p {
+    margin: 1em 4em;
+    text-indent: -3em;
+    text-align: justify;
+}
+/*  h3 + div.grampsstylednote, a.familymap {
+	    margin: 1em 15px 1em ;
+	}
+	i + div.grampsstylednote p {
+	    margin: 0 0 0.3em 0;
+	}
+*/
+
+/* Subsection : Family Map
+----------------------------------------------------- */
+a.familymap {
+    display: block;
+}
+
+/* Subsection : Source References
+----------------------------------------------------- */
+#sourcerefs ol li ol {
+    list-style-type: lower-alpha;
+}
+
+/* Subsection : Pedigree
+----------------------------------------------------- */
+.pedigreegen {
+    list-style-type: none;
+    padding-left: 15px;
+}
+.pedigreegen li ol {
+    list-style-type: none;
+}
+.pedigreegen li ol li ol {
+    list-style-type: decimal;
+}
+.pedigreegen ol.spouselist {
+    list-style-type: none;
+}
+.pedigreegen ol.spouselist li.spouse ol {
+    list-style-type: decimal;
+}
+.spouse:before {
+    content: "+ ";
+}
+.thisperson {
+    font-weight: bold;
+}
+.thisperson > ol {
+    font-weight: normal;
+}
+
+/* Footer
+----------------------------------------------------- */
+#footer {
+    clear: both;
+    margin-top: 1em;
+    background-color: #CCC;
+    border-top: solid 1px #555;
+}
+#footer > * {
+    background-color: #CCC;
+}
+#footer span.copyright {
+    display: inline-block;
+	width: 50%;
+    padding-left: 15px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+#footer span.createdate {
+/*     display: inline-block; */
+    margin-top: 7px;
+	float: right;
+    text-align: right;
+    padding-right: 15px;
+    width: 40%;
+    font-size:8pt;
+    color: gray;
+}
+
+/* Overwritten
+----------------------------------------------------- */
+body#FamilyMap {
+    background-color: #EEE ! important;
+}
+
+/* Calendar Styles
+===================================================== **
+	table.calendar {
+	    table-layout: fixed;
+	    empty-cells: show;
+	}
+	.calendar thead th {
+	    text-align: center;
+	    border-top-style: none;
+	}
+	.calendar thead th.monthName {
+	    font-size: xx-large;
+	    font-weight: normal;
+	    background-color: white;
+	    border-bottom-style: none;
+	    padding-top: 1em;
+	}
+	.calendar thead th abbr {
+	    border-bottom-style: none;
+	}
+	#CreatorInfo {
+	    float: right;
+	    margin: -1em 15px 0px 0px;
+	    font-weight: bold;
+	    color: #999;
+	}
+	.calendar tfoot tr td {
+	    border-top: solid 4px #999;
+	    vertical-align: middle;
+	}
+	
+	/* Calendar : Date Numeral *
+	.calendar div.date {
+	    float: right;
+	    width: 1.8em;
+	    font-size: large;
+	    text-align: center;
+	    background-color: #CCC;
+	    color: #555;
+	}
+	
+	/* Calendar : Date Container *
+	.calendar td {
+	    padding: 0px 0px 0px 1ex;
+	    border-width: 1px 0px 0px 1px;
+	    border-style: solid;
+	    border-color: #CCC;
+	    background-color: #EEE;
+	}
+	.calendar td:first-child {
+	    border-left-style: none;
+	    padding: 0px 0px 0px 1ex;
+	}
+	.calendar tbody tr:first-child td {
+	    border-top-style: none;
+	}
+	
+	/* Calendar : Date Detail *
+	.calendar td ul {
+	    font-size: smaller;
+	    list-style: none;
+	    padding: 0px;
+	}
+	.calendar td ul li {
+	    border-top: dashed 1px #CCC;
+	    padding-top: 0.5em;
+	    padding-bottom: 0.5em;
+	}
+	.calendar td ul li:first-child {
+	    border-style: none;
+	}
+	
+	/* Calendar : Birthday, Anniversary, Highlight *
+	.calendar td.highlight {
+	    background-color: white;
+	}
+	.calendar td.highlight div.date {
+	    color: black;
+	    background-color: #CCC;
+	}
+	
+	/* Calendar : Previous-Next Month *
+	.calendar td.previous,
+	.calendar td.next,
+	.calendar td.previous div.date,
+	.calendar td.next div.date {
+	    color: #CCC;
+	    background-color: #EEE;
+	}
+	
+	/* Calendar : Full Year *
+	body#fullyearlinked div.content {
+	    overflow: hidden;
+	}
+	body#fullyearlinked table.calendar {
+	    float: left;
+	    width: 33.3%;
+	    height: 18em;
+	    border: solid 1px black;
+	}
+	body#fullyearlinked table.calendar thead th {
+	    height: 2em;
+	}
+	body#fullyearlinked table.calendar thead th.monthName {
+	    font-size: large;
+	    padding: 2px 0px;
+	}
+	body#fullyearlinked table.calendar tbody td {
+	    height: 3em;
+	}
+	body#OneDay div.content {
+	    overflow: hidden;
+	}
+*/
+
+div.comment {
+	border: 1px solid;
+	padding: 5px;
+	margin: 5px;
+	background: #eeeeee;
+	border-radius: 15px;
+}
+div.comment .content {
+	/*border: 1px solid;*/
+	white-space: pre-wrap;
+	padding: 5px;
+	margin: 5px;
+	background: white;
+	border-radius: 5px;
+}
+

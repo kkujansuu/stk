@@ -1,0 +1,31 @@
+{# _templates/audit/talletettu.html_ #}
+{% extends "/audit/layout.html" %}
+{% block title %}{{ _('Data stored') }}{% endblock %}
+{% block body %}
+    {{ super() }}
+    <h1>{{ _('Store to Database') }}{% if info %}: <i>{{info}}</i>{% endif %}</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ol  class='flashes'>
+        {% for category, message in messages %}
+          <li class='flash_{{category}}'>{{ message }}</li>
+        {% endfor %}
+        </ol>
+      {% endif %}
+    {% endwith %}
+    <div id="startdiv">
+    {% if text is string %}
+	       <p>{{text}}</p>
+	    {% else %}<table>
+	    {% for line in text %} 
+	       {% set fields = line.split(':') %}<tr>
+	       {% if fields|count == 1 %}<p>{{fields[0]}}</p>
+	       {% else %}
+	       {% for f in fields %}<td>{{f}}</td>{% endfor %}
+	       {% endif %}</tr>
+	    {% endfor %}</table>
+    {% endif %}
+    <p>&rtrif; <a href="javascript:history.back()">{{ _('Go back') }}</a></p>
+    </div>
+{% endblock %}
+

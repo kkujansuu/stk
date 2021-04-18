@@ -1,0 +1,113 @@
+{# templates/admin/start.html_ #}
+{% extends "/admin/layout.html" %}
+{% include "security/_messages.html" %}
+{% block title %}{{ _('Administrator') }}{% endblock %}
+{% block body %}
+{{ super() }}
+
+<script>
+function confirm_clear(url) {
+	var msg = "{{ _('Are you sure you want to clear the database?') }}";
+	var ok = confirm(msg);
+	if (!ok) {
+		return false;
+	}
+	location.href = url;
+	return true;
+}
+function confirm_delete(url) {
+	var msg = "{{ _('Are you sure you want to delete your data?') }}";
+	var ok = confirm(msg);
+	if (!ok) {
+		return false;
+	}
+	location.href = url;
+	return true;
+}
+</script>
+
+<style>
+.startbox ul, .startbox2 ul {
+    list-style-type: disc;
+    margin-left: -26px;
+}
+</style>
+
+<div style="margin-left:50px; padding-bottom: 2em;">
+
+    <h1>{{ _('Isotammi Database Management Operations') }}</h1>
+    <p>{{ _('User') }} <b>{{current_user.name}}</b> &lt;{{current_user.email}}&gt;
+       {{ _('with roles') }} [ {% for r in current_user.roles %}{{r.name}} {% endfor %} ]<br>
+       <span style="font-size:8pt; color:gray">{{ _('Git Application Version') }} 
+          <i>{{ 'git'|app_date }}</i></span>
+   
+    <div class="row">
+{% if current_user.is_authenticated 
+   and (current_user.has_role('admin') or current_user.has_role('master'))  %}
+    <div class="startbox admin">
+      <div style="display: inline-block;">
+        <h2>{{ _('Database Emptyings') }}</h2>
+        <ul><li><i>{{ _('Dangerous operations, which can not be undone!') }}</i></li>
+            <ul>
+              <li><a href="#" onclick="confirm_clear('/admin/clear_db/total')">
+                  {{ _('Clear the entire database') }}</a></li>
+              <li><a href="#" onclick="confirm_clear('/admin/clear_db/save_users')">
+                  {{ _('Clear the database but save user IDs') }}</a></li>
+              <li>{{ _('Delete all my imported data') }} ➔ 
+                  <a href="/gramps/uploads">{{ _("Uploaded Candidate Materials") }}</a><br></li>
+           </ul>
+           <li title="Tai poista node (:Lock{id:'initial'})">
+              <a href="/admin/start_initiate">{{ _('Database refresh') }}</a>.
+              {{ _('Safely check and initiate important nodes, constraints and schema fixes') }}.
+           </li>
+        </ul>
+      </div>
+    </div>
+{% endif %}
+
+{% if current_user.is_authenticated 
+   and (current_user.has_role('admin') or current_user.has_role('master')) %}
+    <div class="startbox admin">
+      <div style="display: inline-block;">
+        <h2>{{ _('User and reference information management') }}</h2>
+        <ul>
+          <li><a href="/admin/list_users">{{ _('Usernames and uploaded materials') }}</a></li>
+          <li><a href="/admin/access_management">{{ _('Access management') }}</a></li>
+          <li>Todo: {{ _('Users and roles table') }}</li>
+          </ul>
+      </div>
+    </div>
+{% endif %}
+
+{% if current_user.is_authenticated 
+   and (current_user.has_role('audit') or current_user.has_role('master')) %}
+    <div class="startbox audit">
+      <div style="display: inline-block;">
+        <h2>{{ _('Data maintenance') }}</h2>
+        <ul>
+            <li><a href="/admin/set/estimated_dates">
+               {{ _('Set the estimated birth and death dates of a person') }}</a></li>
+            <li><a href="/dbeditor/">{{ _('DB Editor') }}</a></li>
+        </ul>
+      </div>
+    </div>
+{% endif %}
+
+{% if current_user.is_authenticated 
+   and (current_user.has_role('admin') or current_user.has_role('master')) %}
+    <div class="startbox admin">
+      <div style="display: inline-block;">
+        <h2>{{ _('Application management') }}</h2>
+        <ul>
+          <li><a href="/admin/readlog">{{ _('Display application log') }}</a></li>
+          <li><a href="/admin/site-map">{{ _('List all application pages') }}</a></li>
+          <li><a href="/stat">{{ _('Server statistics') }}</a></li>
+        </ul>
+      </div>
+    </div>
+{% endif %}
+
+  </div>{# row #}
+</div>
+
+{% endblock %}

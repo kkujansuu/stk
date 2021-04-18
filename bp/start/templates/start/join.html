@@ -1,0 +1,73 @@
+{# _start/join.html_ #}
+{% extends "start/s_layout.html" %}
+{% include "security/_messages.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% block title %}{{ _("Join Isotammi") }} (start/my_message){% endblock %}
+{% block body %}
+{{ super() }}
+{% from "start/s_macros.html" import hamburger_menu with context %}
+
+{{ hamburger_menu() }}
+
+<style>
+table, td {
+	border: none;
+	vertical-align: top;
+
+}
+label { 
+	display: inline-block; 
+	width: 340px; 
+}
+
+ul li {
+	color: red;
+}
+
+ul[id] li {
+	color: black !important;
+}
+#GSF_membership {
+	list-style-type: none;
+}
+</style>
+
+
+<div id="startdiv">
+  <div>
+    <h1>{{ _("Join Isotammi") }}</h1>
+
+    <div class="startbox2">
+        <div>
+        {{ _('To join the Isotammi project please provide some basic information below.') }}
+        {{ _('You can also provide any comments or additional information in the message field.') }}
+        {{ _('After sending this form you will still have to wait for a confirmation email from the Isotammi team before you can access the application.') }}
+        {{ _('Thank You!') }}
+        </div>
+        
+          <form method="post">
+          <input type="hidden" name="name" value="{{ current_user.name }}">
+          <input type="hidden" name="username" value="{{ current_user.username }}">
+          <input type="hidden" name="email" value="{{ current_user.email }}">
+	      {{ form.hidden_tag() }}
+	      <p><label for="name">{{ _("Name") }}</label>{{ current_user.name }}</p>
+	      <p><label for="username">{{ _("User name") }}</label>{{ current_user.username }}</p>
+	      <p><label for="email">{{ _("Email address") }}</label>{{ current_user.email }}</p>
+	      
+   	      {{ render_field_with_errors(form.language) }}	
+   	      {{ render_field_with_errors(form.GSF_membership) }}	
+   	      {{ render_field_with_errors(form.research_years) }}	
+   	      {{ render_field_with_errors(form.software) }}	
+   	      {{ render_field_with_errors(form.researched_names) }}	
+   	      {{ render_field_with_errors(form.researched_places) }}	
+   	      {{ form.text_message.label }}
+   	      {{ render_field(form.text_message,rows=20,cols=59) }}	
+         <div class="right-button">
+     	      {{ render_field(form.submit) }}	
+         </div>
+         </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

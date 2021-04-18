@@ -1,0 +1,393 @@
+/*  Isotammi Genealogical Service for combining multiple researchers' results.
+    Created in co-operation with the Genealogical Society of Finland.
+
+    Copyright (C) 2016-2021  Juha Mäkeläinen, Jorma Haapasalo, Kari Kujansuu, 
+                             Timo Nallikari, Pekka Valta
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/* 
+    Created on : 22.2.2016, 18:12:41
+    Author     : jm
+*/
+
+body {
+    font-family: verdana, sans-serif;
+    font-size: 10pt;
+}
+div#Header {
+    position: relative;
+    height: 23px;
+    font-size: 13pt;
+    font-family: Georgia, "Times New Roman", times;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background-color:bisque;
+    color: #7e6b53; /* Darker bisque */
+    width: 100%;
+    padding: 2px;
+    margin: 13px 0;
+    /* margin-bottom: 2px; /* murupolun kanssa */
+}
+img#logo {
+    width: 64px;
+    height: 64px;
+    float: left;
+    margin: -16px 5px 0 5px;
+    vertical-align: text-top;
+}
+div#Header div.curr_user {
+    float: right; 
+    margin-right: 30px; 
+    font-family: verdana, sans-serif;
+    font-weight: normal; 
+    font-size: 9pt;
+    padding: 4px;
+}
+div#Header div.curr_user a { 
+	text-decoration: none;     
+    color: #7e6b53; /* Darker bisque */
+}
+div#Header div.curr_user a:hover { text-decoration: underline; }
+
+h3 {
+    margin: 0.5em 0;
+}
+div#paluu {
+    position: absolute;
+    top: 50px;
+    left: 6px;
+    width: 60px;
+    display: inline-block;
+    font-weight: normal;
+    font-size: 9pt;
+    text-align: center;
+    text-decoration: none;
+    background: #f6f6f6; 
+    padding: 2pt;
+    color: black;
+    border:1px solid gray;
+    border-style: outset;
+    border-radius: 4pt;
+    margin: 5pt;
+}
+#paluu a { 
+	text-decoration: none; 
+    color: black;
+}
+#return_on_title {
+	margin: -44px 10px 10px 240px;
+}
+
+#createdate { font-size:8pt; }
+
+#startdiv {
+	margin-left:50px;
+	margin-bottom:1em;
+}
+.startbox, .startbox2 {
+    display: inline-block;
+    vertical-align:top;
+    margin: 0 1em 1em 0;
+    padding: 1em; 
+    background-color: bisque;
+    width: 280px;
+    min-height: 200px;
+    border-radius: 15px;
+}
+.startbox2 {
+    width: 603px;
+}
+.bg_intro {
+	background-image: url(/static/charta_bg_680px.jpg);
+	background-size: cover;
+}
+
+.admin {background-color: pink;}
+.audit {
+	background-color: #f9f8bf; /* yellowish */
+	color: DarkGreen;
+}
+.gedtools {background-color: lightsteelblue;}
+.startbox h2, .startbox2 h2 { margin-top: 5px; margin-bottom: 5px; font-size: 16px; }
+.startbox div, .startbox2 div { display: inline-block; width: 100%; }
+.startbox ul, .startbox2 ul {
+    list-style-type: disc;
+    margin-left: -26px;
+}
+.inp {display: inline; }
+.inp label { display: inline-block; width: 100px; }
+.inp input { width: 120px;  margin-left: 1em; }
+.submit { text-align:right; }       /* 20.8.2018 / JMä */
+
+ul.compact {
+	margin: 0;
+    padding-left: 2em;
+}
+ul.compact > li {list-style-type: disc}
+
+.not-allowed {cursor: not-allowed;}
+.editlink::before { content: "✎ "; }
+
+table, th, td {
+    border: 1px solid silver;
+    border-collapse: collapse;
+    padding: 2px;
+    text-align: left;
+/*  vertical-align: text-top; poistettu 3.7.2018/JMä */
+}
+.table100 { 
+	background: ivory; 
+	width: 100%;
+}
+.id { color: sienna; text-align: right; }
+.handle {
+	font-family: Courier, monospace;
+    font-size: 80%;
+    color: sienna;
+ }
+.typevar { font-size: 80%; font-style: italic;
+    text-align: center;
+}
+.center { text-align: center;}
+tr:hover {background-color: #f5f5f5}
+
+#lista { width:80%; float:left}
+#tiedot { 
+    border: 1px solid silver;
+    background-color: whitesmoke;
+    opacity: 0.8;
+    width: 18%; 
+    position:fixed; top:90pt; right: 10pt;}
+#tiedot li {margin-left: -20pt;}
+#tiedot ul {list-style-type: none; font-size: 80%;}
+
+ul.event {
+    list-style:circle;
+    vertical-align: text-top;
+    margin:0;
+}
+ul.event > li {margin-left: -1em;}
+ol#itemlist {
+    list-style: none; 
+    vertical-align: text-top;
+}
+li.itemrow { 
+    margin: 2pt;
+}
+.itemrow div.col1 {
+    display: inline-block;
+    width: 150pt;
+    vertical-align:top;
+    padding-right: 5pt;
+}
+.itemrow div.col2 {
+    display: inline-block;
+    width: 200pt;
+}
+.itemrow div.col3 {
+    display: inline-block;
+    width: 250pt;
+    vertical-align:top;
+    padding-right: 5pt;
+}
+.itemrow div.also { 
+    display: inline-block;
+    font-style: italic;
+    color: skyblue;
+}
+/* ISO/IEC 5218 codes 1=male, 2=female */
+.sex1 {color:blue}
+.sex2 {color:red}
+
+.flashes {
+    font-size: 10pt;
+    margin: 2em 6em;
+    padding: 0.5em 3em;
+    color: darkblue;
+    border: solid 2pt darkblue; 
+    background-color: lightyellow;
+}
+.msg_TITLE   {color: black; line-height: 1.8; font-size: 120% }
+.msg_INFO    {padding-left: 1em; color: black }
+.msg_WARNING {padding-left: 2em; color: blueviolet }
+.msg_ERROR   {padding-left: 3em; color: red; font-weight: bold }
+.flash_error {color: red; font-weight: bold }
+.flash_warning {color: blueviolet }
+.flash_message { color: blue }
+
+.right {
+	margin-left: auto;
+	text-align: right;
+	}
+.nowrap { white-space: nowrap; }
+
+div.fullclear {
+    clear: both;
+}
+
+/* Footer
+----------------------------------------------------- */
+#footer {
+    clear: both;
+    margin-top: 1em;
+    background-color: #CCC;
+    border-top: solid 1px #555;
+    color: gray;
+    text-align: right;
+}
+#footer > * {
+    background-color: #CCC;
+}
+#footer span.copyright {
+    display: inline-block;
+    width: 50%;
+    padding-left: 15px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+#footer span.createdate {
+    display: inline-block;
+    margin-top: 7px;
+    float: right;
+    text-align: right;
+    padding-right: 15px;
+    width: 40%;
+    font-size:8pt;
+    color: gray;
+}
+
+/* Legend and tooltip help button
+----------------------------------------------------- */
+
+div.legend {
+     margin-left:4em; 
+     font-size: 90%;
+     border-left: 6px solid silver;
+}
+table.legend, table.legend > tbody > tr > td, table.legend > tbody > tr > th {
+    border:none;
+    outline:none;
+    margin: 1em 4em; 
+    font-size: 90%;
+    border-left: 6px solid silver;
+}
+table.legend > tbody > tr > td, table.legend > tbody > tr > th {
+    border:none;
+    outline:none;
+}
+
+div.steps { margin: 1em;}
+div.steps div {
+	border-style: solid;
+	border-radius: 5px;
+	border-width: 1px 3px 3px 1px;
+	border-color: gray;
+	display: inline-block;
+    height: 70px;
+	width: 150px;
+	padding: 5px;
+	background-color: lightyellow;
+	box-shadow: 5px 5px 5px lightgrey;
+}
+div.steps > div div {
+	padding-bottom: 0 !important;
+}
+div.steps div.bg {
+    border: 0px;
+    height:35px;
+    /*color: none;
+    background-color: #ffffe9;*/
+}
+div.steps div.exception {
+    border: 0px;
+    margin:3px;
+    height:auto;
+    color: gray;
+    background-color: #ffffe9;
+}
+div.steps div.active {
+    background-color: gainsboro;
+}
+.fileselect {
+	border-width: 2px 3px 3px 2px; 
+	min-width: 725px;
+}
+
+/* Tooltip help container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  /*border-bottom: 1px dotted black;*/
+  background-color: DarkGray;
+  color: white;
+  padding: 0 2pt;
+  border-radius: 7pt;
+}
+/* Tooltip text */
+.tooltip .tooltiptext {
+  font-weight: normal;
+  visibility: hidden;
+  width: 320pt;
+  background-color: Cornsilk;
+  color: DarkSlateGray;
+  padding: 0 5pt;
+  border: 1pt solid gray;
+  border-radius: 6pt;
+  /* Position the tooltip text */
+  position: absolute;
+  top: -5px;
+  right: 105%; 
+  z-index: 1;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+/* Navigation, buttons
+----------------------------------------------------- */
+
+div.right-button { /* Area for Next button located in right corner */
+	display: -webkit-flex; /* Safari */
+	-webkit-justify-content: right; /* Safari 6.1+ */
+	display: flex;
+	justify-content: right;
+}
+div.right-button p {
+	margin:0;
+}
+
+.navlink, a.navlink:link, a.navlink:visited {
+  background-color: lightgray;
+  border: 1pt solid black;
+  border-radius: 10px;
+  color: black;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin-left:4px;
+}
+a.navlink:hover, a.navlink:active {
+  background-color: gray;
+}
+
+.gedcom_id { color: sienna; text-align: right; 
+    font-family: monospace
+}
+
+div.content {
+	margin: 2em;
+}

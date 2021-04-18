@@ -1,0 +1,241 @@
+{# _myapp/templates/list_persons.html_ #}
+{% extends "/scene/sc_layout.html" %}
+{% block title %}{{ _('List of persons') }}{% endblock %}
+{% block body %}
+{{ super() }}
+{% import '/scene/macros.html' as macro with context %}
+
+{% set cnt = persons|count %}
+{% set next_fw = user_context.next_name('fw') %}
+{% set next_bw = user_context.next_name('bw') %}
+{% set next_at_end = user_context.at_end() %}
+{% set ctxt = user_context.context %}
+{% if ctxt == 3 or ctxt == 5 %}{#
+	#   common_own   011 3 = 1+2 = user's data & common
+	#   common_batch 101 5 = 1+4 = user batch & common #}
+	{% set multi_owners = ctxt - 1 %}
+{% else %}
+    {% set multi_owners = 0 %}
+{% endif %}
+
+<div id="startdiv">
+    <h1>{{ _('Persons') }}</h1>
+    <div>{{ macro.show_use_case() }}</div>
+</div>
+
+{{ macro.menu(menuno) }}
+<div id="popup_app">
+
+	<div class="content" id="Individuals">
+        <div id="summaryarea">
+            <div class="flex-container">
+	           <div id="description_box">
+                   <p>{{ _('Displaying %(num)s distinct persons', num=cnt) }}
+	{% if next_fw > ' ' %}
+					   {{ _('starting <tt>%(name)s</tt>', name=user_context.first) }}.
+	{% else %}         {{ _('from begin') }}.
+	{% endif %}
+    {% if num_hidden %}
+                       		<br>-
+						    {{ ngettext(
+						    	'%(num)s person hidden because of privacy protection', 
+						    	'%(num)s people hidden because of privacy protection', 
+						    	num_hidden ) 
+						    }}
+    {% endif %}
+                       </p>
+	           </div>
+	           <div class="SearchBox">
+	               <form action="/scene/persons/all">
+	                 <fieldset>
+	                    <input type="hidden" name="c" value="50" >
+	                    <label for="fw">{{ _('Go to') }}</label>
+	                    <input type="text" name="fw" size="8" 
+	                     title="{{ _('Starting letters of surname') }}" 
+	                     placeholder="{{ _('Surname') }}">
+	                    <input type="submit" value=" > ">
+	                 </fieldset>
+	               </form>
+	           </div>
+            </div>
+	        {% with messages = get_flashed_messages(with_categories=true) %}
+	          {% if messages %}
+	            <ul  class='flashes'>
+	            {% for category, message in messages %}
+	              <li class='flash_{{category}}'>{{ message }}</li>
+	            {% endfor %}
+	            </ul>
+	          {% endif %}
+	        {% endwith %}
+        </div>
+
+    {% if cnt %}
+		<div id="alphanav">{% set alpha = "¤" %}
+			<ul><li><a href="#" title="{{ _('Top of page') }}">&uarr;</a></li>
+				{{ macro.buttons_bw(user_context, "/scene/persons/all") }}
+            {% for p in persons %}
+                {% set ini = p.sortname[0] %}
+                {% if loop.changed(ini) %}{% if not ini == "#" %}
+	                <li><a href="javascript:jump('{{ini}}')" title="{{ _('Alphabetical Menu') }}: {{ini}}">{{ini}}</a></li>
+                {% endif %}{% endif %}
+            {% endfor %}
+				{{ macro.buttons_fw(user_context, "/scene/persons/all") }}
+            </ul>
+
+		</div>
+		<table class="IndividualList">
+			<thead>
+				<tr><th></th>
+					<th>{{ _('Person') }}</th>
+                    <th>{{ _("Events") }}</th>
+				</tr>
+			</thead>
+			<tbody>
+
+	    {% for p in persons %}
+	       {% if multi_owners %}
+              {% set owner_but_me = p.owners | sort %}
+	       {% else %}{% set owner_but_me = [] %}
+	       {% endif %}
+	            <tr><td class="ColumnAlpha">
+           {% set ini = p.sortname[0] %}
+           {% if loop.changed(ini) %}
+              {% if ini == "#" %}{% set symbol = '–' %}
+              {% else %}{% set symbol = ini %}{% endif %}
+		               <a id="{{symbol}}" name="{{ini}}" title="{{ _('Back to Top') }}" 
+		                  href="#">{{symbol}}</a>
+	       {% endif %}
+	                </td>
+
+	                <td class="ColumnPerson">
+	                    <div>
+           {% if p.owners %}
+              {# Special hack, see "Can a Jinja variable's scope extend beyond in an inner block?" #}
+              {% set not_mine = [False] %}
+	          {% for ow in p.owners %}
+	             {% if config['DEMO'] or ow == user_context.user %}
+                            <div class="detail_link" alt="{{p.uniq_id}}">
+                                 {{p.sex_symbol()}} 
+                                {{ macro.person(p) }}
+                                <div class="pop-open-family" 
+                                    v-on:click="showPopup(uuid='{{p.uuid}}',$event)"
+                                    title="Näytä perheet">👪</div>
+                            </div>
+                 {% else %}{% set _x = not_mine.append(not not_mine.pop()) %}
+                            <span class="owner">&nbsp;{{ow}}&nbsp;</span>
+                            <div class="no_detail" title="Ei katseluoikeutta!">
+                                 {{p.sex_symbol()}} {{ macro.person_name(p.names[0]) }}
+                            </div>
+                 {% endif %}
+	          {% endfor %}
+	       {% else %}
+                            <div class="detail_link" alt="{{p.uniq_id}}">
+                                {{p.sex_symbol()}} 
+                                {{ macro.person(p) }}
+                                 <div class="pop-open-family" 
+                                    v-on:mouseover="showPopup(uuid='{{p.uuid}}',$event)"
+                                    title="Näytä perheet">👪</div>
+                            </div>
+	       {% endif %}
+
+           
+           {% if p.uuid %}   <span class="idno">Uuid:{{p.uuid_short()}} /</span>
+	       {% endif %}
+                             <span class="id" title="{{ _('Original ID') }}">{{p.id}}</span>
+	                    </div>
+	                </td>
+
+                <td class="ColumnEvent">
+           {% if p.events is iterable %}
+                    <div>
+              {% for e in p.events|sort() %}
+                 {% if e.type == "Birth" or e.type == "Death" %}{% set ecl = "major" %}
+                 {% else %}{% set ecl = "minor" %}{% endif %}
+                        <div class="eventgrid">
+                            <div class="col col_event">
+                                <span class="evtype {{ecl}}">{{e.type|transl('evt')|lower}}</span>
+                                {{e.description}}</div>
+                            <div class="col col_date">
+                                {% if e.dates %}{{e.dates}} {% endif %}
+                                {% if e.place %} | {{e.place}}{% endif %}</div>
+                      </div>
+              {% endfor %}
+                    </div>
+           {% else %}<u>See person {{p.events}}</u>
+                </td>
+           {% endif %}
+	    {% endfor %}
+
+        {% if next_at_end %}
+                <tr><td class="ColumnAlpha"></td>
+                    <td colspan="2" id="lastitem_badge">
+                        <i>{{ _('The last item found') }}</i>
+                    </td>
+                </tr>
+	    {% endif %}
+            </tbody>
+        </table>
+	{% else %}
+        <div class="NotFound">
+            <p>{{ _('No one found with search keys starting "%(name)s"', name=next_fw) }}.</p>
+            {% if next_fw %}<p>&nbsp;&#9656; <a href="/scene/persons/all?fw=%20" 
+                title="{{ _('first page') }}">{{ _("Go to the first person") }}</a></p>
+            {% endif %}
+        </div>
+        <p>&nbsp;</p>
+	{% endif %}
+    </div>
+
+  <div id="pop-window" v-show="isShow" v-on:mouseleave="isShow=false">
+    <!--div id="close-x">✕</div -->
+    <div id="pop-buttons" v-if="families.length > 1">
+      <button 
+         v-on:mouseover="changeFamily(index, $event)"
+         v-on:touchstart="changeFamily(index, $event)"
+         v-for="(f, index) of families" :key="f.id"
+         v-bind:class="{ 'tab': true, 'tab_active': (index==(currentIndex-1)) }">
+            ${f.role_lang}</button>
+    </div>
+
+    <div class="pop-container">
+      <div class="pop-text" v-if="currentIndex">
+          <p><a v-bind:href="current.href" title="See family" class="inlink">
+              ${translations['family']}</a>
+              ${current.rel_type} ${datesStr(current.dates)}
+          </p>
+          <ul>
+              <li v-for="p in current.parents" :key="p.uuid">
+                ${p.role} 
+                <a v-bind:href="p.href" title="Katso henkilöä"
+                   v-bind:class="{ 'inlink': true, 'link_self': p.is_self }">
+                   ${p.name[1]} <i>${p.name[2]}</i> <b>${p.name[0]}</b></a>
+                  <span v-if="p.birth_date">s.&nbsp;${datesStr(p.birth_date)}</span>
+              </li>
+              <li v-if="current.has_children">${translations['children']}:
+                 <ul>
+                     <li v-for="p in current.children" :key="p.uuid">${p.gender}
+                       <a v-bind:href="p.href" title="Katso henkilöä"
+                          v-bind:class="{ 'inlink': true, 'link_self': p.is_self }">
+                          ${p.name[1]} <i>${p.name[2]}</i> <b>${p.name[0]}</b></a>
+                       <span v-if="p.birth_date">s.&nbsp;${datesStr(p.birth_date)}</span>
+                     </li>
+                 </ul>
+              </li>
+          </ul>
+      </div>
+    </div>
+    <div style="margin-right: 20pt; margin-top: 5pt;" v-show="families.length == 0">
+        ${message}
+    </div>
+  </div>
+  <div class="pop-error" v-show="false"><!-- For debugging change v-show -->
+    <p style="border:2px solid red; position: fixed; top: 5em;right: 0;">
+       Families:<br>${message}</p>
+  </div>
+
+</div>
+
+<!-- vue and assistant methods -->
+<script src="/static/js/family_popup.js"></script>
+
+{% endblock %}

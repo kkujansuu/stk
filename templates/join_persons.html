@@ -1,0 +1,78 @@
+{# _myapp/templates/person.html_ #}
+{% extends "a_layout.html" %}
+{% block title %}{{ _('Merging people') }}{% endblock %}
+{% block body %}
+{{ super() }}
+<script>
+function myFunction(oid, fn, ln) {
+    document.getElementById("tiedot").innerHTML = "<h2>Mahdollisia referenssinimiä</h2><p>Henkilö " + oid +
+            "</p><h3>Etunimi " + fn + "</h3><ul>" + 
+        "<li><input type='radio' name='retu' value='Aleksi' /> Demo-Aleksi</li>" +
+    "</ul><h3>Sukunimi " + ln + "</h3><ul>" + 
+        "<li><input type='radio' name='rsuku' value='Andersson' /> Demo-Andersson (sukunimi)</li>" +
+        "<li><input type='radio' name='rsuku' value='Andersson:p' /> Demo-Andersson (patronyymi)</li>" +
+        "<li><input type='radio' name='rsuku' value='Antinpoika:p' /> Demo-Antinpoika (patronyymi)</li>" +
+    "</ul>";
+}</script>
+<h1>{{ _('Merging people') }}</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul  class='flashes'>
+    {% for category, message in messages %}
+      <li class='flash_{{category}}}'>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<form action="/samahenkilo" method="post" enctype="multipart/form-data">
+<div id="lista">
+    <p>{{ _('People whose name begins with') }} '{{pattern}}'</p>
+       <input type="text" name="names" value="{{pattern}}" readonly hidden>
+    <ol style='border: solid 1pt gray; background-color: lightgoldenrodyellow'>
+        <li> {{ _('Mark the central person (1st selection column) and the people to be merged (2nd column)') }}
+        <li> {{ _('If necessary, pick up nearby reference names <i> (not already in use)') }}</i>
+        <li> <input type="submit" value="{{ _('Merge to selected Central Person') }}" />
+    </ol>
+<table width="100%">
+    <tr><th><center>{{ _('Relate Person') }} o&Larr;x</center></th>
+        <th>{{ _("person") }}</th>
+        <th>{{ _('Court, Signum') }}</th>
+    </tr>
+
+{% for p in persons %}
+    {% set e = p.events[0] %}
+    <tr>
+        <td><center>
+            <input type="radio" name="base" value="{{p.oid}}"
+                   onchange="myFunction('{{p.oid}}', '{{p.names[0].first}}', '{{p.names[0].last}}')"/>
+            <input type="checkbox" name="join" value="{{p.oid}}" />
+            </center>
+        </td>
+        <td><span class="id">{{p.oid}}</span>
+            {{p.names[0].first}} <b>{{p.names[0].last}}</b>
+            <i>{% if p.occupation %}{{p.occupation}}{% endif %}</i></td>
+        <td>{% if p.events|count %}<ul class="event">
+                {% for e in p.events %}
+	                <li><span class="id">{{e.oid}}</span>
+	                    {{e.name}} {{e.dates}} {% if e.citation %}
+	                    {% for note in e.citation.notes %}
+	                        ({% if note.url %}<a href='{{note.url}}'>{{note.text}}</a>
+	                         {% else %}{{note.text}}{% endif %})
+	                    {% endfor %}
+	                {% else %}{{e.citation.oid}})
+	                {% endif %} 
+	                </li>
+                {% endfor %}</ul>
+            {% endif %}
+            </td>
+    </tr>
+{% endfor %}    
+    
+</table>
+</div>
+<div id="tiedot">
+    <h2>{{ _('Reference names') }}</h2>
+    <p>&nbsp;</p>
+</div>
+</form>
+{% endblock %}
