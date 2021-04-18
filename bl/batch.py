@@ -103,10 +103,9 @@ class Batch:
     @staticmethod
     def delete_batch(username, batch_id):
         with shareds.driver.session() as session:
-            result = session.run(
+            return session.run(
                 CypherBatch.delete, username=username, batch_id=batch_id
             )
-            return result
 
     @staticmethod
     def get_filename(username, batch_id):
@@ -167,11 +166,11 @@ class Batch:
             # Trick: Set Person as first in sort order!
             if label == "Person":
                 label = " Person"
-            if label and not label in titles:
+            if label and label not in titles:
                 titles.append(label)
 
             key = f"{user}/{batch_id}/{tstring}"
-            if not key in user_data:
+            if key not in user_data:
                 user_data[key] = {}
             user_data[key][label] = cnt
 
@@ -188,10 +187,9 @@ class Batch:
         """ Timestamp to display format. """
         if ts:
             t = float(ts) / 1000.0
-            tstring = datetime.fromtimestamp(t).strftime("%-d.%-m.%Y %H:%M")
+            return datetime.fromtimestamp(t).strftime("%-d.%-m.%Y %H:%M")
         else:
-            tstring = ""
-        return tstring
+            return ""
 
     @staticmethod
     def get_batch_stats(batch_id):
@@ -259,8 +257,7 @@ class Batch:
             .run(Cypher_adm.drop_empty_batches, today=today)
             .single()
         )
-        cnt = record[0]
-        return cnt
+        return record[0]
 
 
 class BatchUpdater(DataService):
@@ -314,8 +311,7 @@ class BatchUpdater(DataService):
 
     def mark_complete(self):
         """ Mark this data batch completed """
-        res = shareds.dservice.ds_batch_set_status(self.batch, "completed")
-        return res
+        return shareds.dservice.ds_batch_set_status(self.batch, "completed")
 
     def commit(self):
         """ Commit transaction. """

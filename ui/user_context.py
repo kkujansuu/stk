@@ -254,7 +254,7 @@ class UserContext:
                 # Use original session_scope as is
                 return [self.first, self.last]
 
-            if not fw is None:
+            if fw is not None:
                 # Direction forward from fw: set first = old last
                 self.direction = "fw"
                 return [unquote_plus(fw), None]
@@ -336,7 +336,7 @@ class UserContext:
 
     def set_scope_from_request(
         self, request=None, session_var=None
-    ):  # set_next_from_request:
+    ):    # set_next_from_request:
         """Calculate scope values from request or session.
 
         :param: request        http request
@@ -352,16 +352,14 @@ class UserContext:
         if request:
             fw = request.args.get("fw", None)
             bw = request.args.get("bw", None)
-            if not (fw is None and bw is None):
+            if fw is not None or bw is not None:
                 if fw is None:
                     # Direction backwards from bw parameter
                     self.last = unquote_plus(bw)
-                    return
                 else:  # bw is None:
                     # Direction forward from fw parameter
                     self.first = unquote_plus(fw)
-                    return
-
+                return
         # No request or no fw or bw in request
         if self.session_var:
             scope = [self.first, self.last]
@@ -439,12 +437,8 @@ class UserContext:
 
     def at_end(self):
         """Tells, if page contains the last name of data."""
-        if self.last.startswith(self.NEXT_END):
-            return True
-        return False
+        return bool(self.last.startswith(self.NEXT_END))
 
     def at_start(self):
         """Tells, if page contains the first name of data."""
-        if self.first == "" or self.first.startswith(self.NEXT_START):
-            return True
-        return False
+        return bool(self.first == "" or self.first.startswith(self.NEXT_START))

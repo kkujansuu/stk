@@ -451,7 +451,7 @@ RETURN person, name
         self.id = None
 
         for person_record in person_result:
-            if self.id == None:
+            if self.id is None:
                 node = person_record["person"]
                 self.from_node(node)
 
@@ -1049,9 +1049,8 @@ RETURN a, [x IN RELATIONSHIPS(path)] AS li
             if len(first2) >= len(first1):
                 for i in range(len(first1)):
                     # Give points if refnames match
-                    if refname1[i] != " ":
-                        if refname1[i] == refname2[i]:
-                            points += 1
+                    if refname1[i] != " " and refname1[i] == refname2[i]:
+                        points += 1
                     if print_out:
                         print("Alt: " + alt1[i] + " # " + alt2[i])
                         print("Type: " + type1[i] + " # " + type2[i])
@@ -1239,9 +1238,8 @@ RETURN a, [x IN RELATIONSHIPS(path)] AS li
             if len(first2) >= len(first1):
                 for i in range(len(first1)):
                     # Give points if refnames match
-                    if refname1[i] != " ":
-                        if refname1[i] == refname2[i]:
-                            points += 1
+                    if refname1[i] != " " and refname1[i] == refname2[i]:
+                        points += 1
                     if print_out:
                         print("Alt: " + alt1[i] + " # " + alt2[i])
                         print("Type: " + type1[i] + " # " + type2[i])

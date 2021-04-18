@@ -82,9 +82,8 @@ def scan_endpoints_for_file(fname):
             info = Info(node.name)
 
             for call in node.decorator_list:
-                if isinstance(call, _ast.Name):
-                    if call.id == "login_required":
-                        info.login_required = True
+                if isinstance(call, _ast.Name) and call.id == "login_required":
+                    info.login_required = True
                 if isinstance(call, _ast.Call):
                     if isinstance(call.func, _ast.Attribute):
                         decorator_name = call.func.attr
@@ -100,7 +99,7 @@ def scan_endpoints_for_file(fname):
                         info.urls.append(arglist[0])
                     if decorator_name == "roles_accepted":
                         info.roles_accepted = arglist
-                    if decorator_name == "roles_required":
+                    elif decorator_name == "roles_required":
                         info.roles_required = arglist
             if info.urls is not None:
                 for url in info.urls:

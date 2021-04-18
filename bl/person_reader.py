@@ -52,7 +52,7 @@ class PersonReaderTx(DataService):
         """ Add the object to collection of referenced objects. """
         if obj is None:
             return
-        if not obj.uniq_id in self.obj_catalog:
+        if obj.uniq_id not in self.obj_catalog:
             self.obj_catalog[obj.uniq_id] = obj
         else:
             c = self.obj_catalog[obj.uniq_id]
@@ -139,7 +139,7 @@ class PersonReaderTx(DataService):
 
             # Events
             for node, pname, role in p_record.events_w_role:
-                if not node is None:
+                if node is not None:
                     e = EventBl.from_node(node)
                     e.place = pname or ""
                     if role and role != "Primary":
@@ -149,7 +149,7 @@ class PersonReaderTx(DataService):
             persons.append(p)
 
         # Update the page scope according to items really found
-        if len(persons) > 0:
+        if persons:
             context.update_session_scope(
                 "person_scope",
                 persons[0].sortname,

@@ -39,7 +39,7 @@ class Note(NodeObject):
 
     def __str__(self):
         desc = self.text if len(self.text) < 17 else self.text[:16] + "..."
-        url = "" if self.url == None else self.url
+        url = "" if self.url is None else self.url
         return "{} {} {!r} {}".format(self.id, self.type, desc, url)
 
     @classmethod

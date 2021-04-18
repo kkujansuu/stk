@@ -58,39 +58,27 @@ def analyze_xml(username, filename):
     """ Get XML DOM parser and start DOM elements handler transaction """
     handler = DOM_handler(file_cleaned, username, filename)
 
-    citation_source_cnt = 0
-    event_citation_cnt = 0
-    family_citation_cnt = 0
-    object_citation_cnt = 0
-    person_citation_cnt = 0
-    place_citation_cnt = 0
-    source_repository_cnt = 0
-
-    event_no_citation_cnt = 0  # How many events do not have any citationref?
-
-    # Estimated times per item (ms)
-    e_citation = 3
-    e_event = 3
-    e_family = 4
-    e_object = 6
-    e_note = 3
-    e_person = 16
-    e_place = 6
-    e_repository = 2
-    e_source = 3
     e_total = 0
 
     citations = handler.collection.getElementsByTagName("citation")
     citation_cnt = len(citations)
     if citation_cnt > 0:
+        # Estimated times per item (ms)
+        e_citation = 3
         e_total += citation_cnt * e_citation / 1000
-        for citation in citations:
-            citation_source_cnt += len(citation.getElementsByTagName("sourceref"))
+        citation_source_cnt = sum(
+            len(citation.getElementsByTagName("sourceref"))
+            for citation in citations
+        )
 
     events = handler.collection.getElementsByTagName("event")
     event_cnt = len(events)
     if event_cnt > 0:
+        e_event = 3
         e_total += event_cnt * e_event / 1000
+        event_citation_cnt = 0
+        event_no_citation_cnt = 0  # How many events do not have any citationref?
+
         for event in events:
             event_citation_cnt += len(event.getElementsByTagName("citationref"))
             if len(event.getElementsByTagName("citationref")) == 0:
@@ -99,54 +87,66 @@ def analyze_xml(username, filename):
     families = handler.collection.getElementsByTagName("family")
     family_cnt = len(families)
     if family_cnt > 0:
+        e_family = 4
         e_total += family_cnt * e_family / 1000
-        for family in families:
-            family_citation_cnt += len(family.getElementsByTagName("citationref"))
+        family_citation_cnt = sum(
+            len(family.getElementsByTagName("citationref"))
+            for family in families
+        )
 
     notes = handler.collection.getElementsByTagName("note")
     note_cnt = len(notes)
     if note_cnt > 0:
+        e_note = 3
         e_total += note_cnt * e_note / 1000
 
     objects = handler.collection.getElementsByTagName("object")
     object_cnt = len(objects)
     if object_cnt > 0:
+        e_object = 6
         e_total += object_cnt * e_object / 1000
-        for media in objects:
-            object_citation_cnt += len(media.getElementsByTagName("citationref"))
+        object_citation_cnt = sum(
+            len(media.getElementsByTagName("citationref")) for media in objects
+        )
 
     persons = handler.collection.getElementsByTagName("person")
     person_cnt = len(persons)
     if person_cnt > 0:
+        e_person = 16
         e_total += person_cnt * e_person / 1000
-        for person in persons:
-            person_citation_cnt += len(person.getElementsByTagName("citationref"))
+        person_citation_cnt = sum(
+            len(person.getElementsByTagName("citationref"))
+            for person in persons
+        )
 
     places = handler.collection.getElementsByTagName("placeobj")
     place_cnt = len(places)
     if place_cnt > 0:
+        e_place = 6
         e_total += place_cnt * e_place / 1000
-        for place in places:
-            place_citation_cnt += len(place.getElementsByTagName("citationref"))
+        place_citation_cnt = sum(
+            len(place.getElementsByTagName("citationref")) for place in places
+        )
 
     repositorys = handler.collection.getElementsByTagName("repository")
     repository_cnt = len(repositorys)
     if repository_cnt > 0:
+        e_repository = 2
         e_total += repository_cnt * e_repository / 1000
 
     sources = handler.collection.getElementsByTagName("source")
     source_cnt = len(sources)
     if source_cnt > 0:
+        e_source = 3
         e_total += source_cnt * e_source / 1000
-        for source in sources:
-            source_repository_cnt += len(source.getElementsByTagName("reporef"))
+        source_repository_cnt = sum(
+            len(source.getElementsByTagName("reporef")) for source in sources
+        )
 
-    counts = {}
+
     # This avoids RuntimeError: dictionary changed size during iteration
     items = list(locals().items())
-    for item in items:
-        if item[0].endswith("_cnt"):
-            counts[item[0]] = item[1]
+    counts = {item[0]: item[1] for item in items if item[0].endswith("_cnt")}
     counts["e_total"] = e_total
     return counts
 

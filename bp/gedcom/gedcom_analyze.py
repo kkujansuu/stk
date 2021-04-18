@@ -108,13 +108,13 @@ events = set(events.splitlines())
 
 
 def read_allowed_paths():
-    allowed = set()
     from . import gedcom_grammar_data
 
-    for line in gedcom_grammar_data.paths.splitlines():
-        if line.strip() != "":
-            allowed.add(line.strip())
-    return allowed
+    return {
+        line.strip()
+        for line in gedcom_grammar_data.paths.splitlines()
+        if line.strip() != ""
+    }
 
 
 def valid_date(datestring):
@@ -221,8 +221,8 @@ class Analyzer(transformer.Transformation):
         self.too_many = LineCounter(_("Too many child tags"))
         self.submitter_refs = LineCounter(_("Records for submitters"))
         self.family_with_no_parents = LineCounter(_("Families with no parents"))
-        self.submitters = dict()
-        self.submitter_emails = dict()
+        self.submitters = {}
+        self.submitter_emails = {}
         self.records = {}
         self.xrefs = {}
         self.types = defaultdict(LineCounter)
@@ -249,11 +249,6 @@ class Analyzer(transformer.Transformation):
         self.parser2 = nameparser.NameParser()
 
     def transform(self, item, options, phase):
-        if 0:
-            print("line:", item.line)
-            print("tag:", item.tag)
-            print("path:", item.path)
-            print("value:", item.value)
         path = item.path
         if path[0] == "@":
             path = path.split(".", maxsplit=1)[1]
@@ -273,9 +268,8 @@ class Analyzer(transformer.Transformation):
         if item.tag == "SEX":
             self.genders[item.value] += 1
 
-        if item.tag == "DATE":
-            if not valid_date(item.value.strip()):
-                self.invalid_dates.add(item.value, item)
+        if item.tag == "DATE" and not valid_date(item.value.strip()):
+            self.invalid_dates.add(item.value, item)
 
         if path in self.mandatory_paths:
             self.mandatory_paths.remove(path)
@@ -283,10 +277,7 @@ class Analyzer(transformer.Transformation):
         taglist = gedcom_grammar_data2.data.get(path)
         if taglist:
             for (tag, (_mincount, maxcount)) in taglist:
-                count = 0
-                for c in item.children:
-                    if c.tag == tag:
-                        count += 1
+                count = sum(c.tag == tag for c in item.children)
                 if maxcount and count > maxcount:
                     self.too_many.add(
                         "{} {} tags under {} - should be at most {}".format(
@@ -311,7 +302,7 @@ class Analyzer(transformer.Transformation):
             and not item.value.startswith("@#")
         ):
             self.xrefs[item.value] = item
-            if not item.value.startswith("@@") and not item.tag in {
+            if not item.value.startswith("@@") and item.tag not in {
                 "SOUR",
                 "REPO",
                 "SUBM",
@@ -340,7 +331,7 @@ class Analyzer(transformer.Transformation):
             for c1 in item.children:
                 if c1.tag == "HUSB":
                     husb = c1.value
-                if c1.tag == "WIFE":
+                elif c1.tag == "WIFE":
                     wife = c1.value
             if husb is None and wife is None:
                 self.family_with_no_parents.add("", item)

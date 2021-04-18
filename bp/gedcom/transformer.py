@@ -242,7 +242,7 @@ class Transformer:
             elif int(tkns[0]) < level:
                 raise RuntimeError(_("Invalid GEDCOM at line: {}").format(line))
 
-        if len(linenums) == 0:
+        if not linenums:
             raise RuntimeError(_("Invalid GEDCOM; no level %s lines") % level)
         items = []
         for i, j in zip(linenums, linenums[1:] + [None]):

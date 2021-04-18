@@ -98,10 +98,7 @@ class Role(RoleMixin):
     @staticmethod
     def has_role(name, role_list):
         """Check, if given role name exists in a list of Role objects."""
-        for role in role_list:
-            if role == name or role.name == name:
-                return True
-        return False
+        return any(role == name or role.name == name for role in role_list)
 
 
 class User(UserMixin):
@@ -144,25 +141,22 @@ class User(UserMixin):
         self.agree = kwargs.get("agree")
 
     def __str__(self):
-        if self.roles:
-            rolelist = []
-            for i in self.roles:
-                if isinstance(i, str):
-                    # Got a Role name
-                    rolelist.append(i)
-                elif isinstance(i, Role):
-                    # Got a Role object
-                    rolelist.append(i.name)
-            return f"setups.User {self.username} {rolelist}"
-        else:
+        if not self.roles:
             return f"setups.User {self.username}, no roles"
+
+        rolelist = []
+        for i in self.roles:
+            if isinstance(i, str):
+                # Got a Role name
+                rolelist.append(i)
+            elif isinstance(i, Role):
+                # Got a Role object
+                rolelist.append(i.name)
+        return f"setups.User {self.username} {rolelist}"
 
     def has_role(self, role_name):
         """Check if user has given role"""
-        for r in self.roles:
-            if r.name == role_name:
-                return True
-        return False
+        return any(r.name == role_name for r in self.roles)
 
 
 # class UserProfile():
@@ -179,7 +173,7 @@ class LazyFormat(_LazyString):
     @property
     def value(self):
         return _l(self.s).format(
-            **dict((name, _l(value)) for (name, value) in self.params.items())
+            **{name: _l(value) for (name, value) in self.params.items()}
         )
 
 
@@ -243,38 +237,37 @@ shareds.mail = Mail(shareds.app)
 shareds.user_model = User
 shareds.role_model = Role
 
-if True:
-    #
-    #    A Neo4j database is selected as our datastore
-    #
-    # dataservice, readservice, readservice_tx -> Tietokantapalvelu
-    #      driver -> Tietokanta-ajuri
-    #
-    # About database driver object:
-    # https://neo4j.com/docs/api/python-driver/current/api.html#driver-object-lifetime
-    #
-    from pe.neo4j.updateservice import Neo4jUpdateService
-    from pe.neo4j.writeservice import Neo4jWriteService
-    from pe.neo4j.readservice import Neo4jReadService
-    from pe.neo4j.readservice_tx import Neo4jReadServiceTx
+#
+#    A Neo4j database is selected as our datastore
+#
+# dataservice, readservice, readservice_tx -> Tietokantapalvelu
+#      driver -> Tietokanta-ajuri
+#
+# About database driver object:
+# https://neo4j.com/docs/api/python-driver/current/api.html#driver-object-lifetime
+#
+from pe.neo4j.updateservice import Neo4jUpdateService
+from pe.neo4j.writeservice import Neo4jWriteService
+from pe.neo4j.readservice import Neo4jReadService
+from pe.neo4j.readservice_tx import Neo4jReadServiceTx
 
-    shareds.db = Neo4jEngine(shareds.app)
-    shareds.driver = shareds.db.driver
-    shareds.dataservices = {
-        "read": Neo4jReadService,
-        "read_tx": Neo4jReadServiceTx,
-        "update": Neo4jUpdateService,
-        "simple": Neo4jWriteService,  # Without transaction
-    }
+shareds.db = Neo4jEngine(shareds.app)
+shareds.driver = shareds.db.driver
+shareds.dataservices = {
+    "read": Neo4jReadService,
+    "read_tx": Neo4jReadServiceTx,
+    "update": Neo4jUpdateService,
+    "simple": Neo4jWriteService,  # Without transaction
+}
 
-    # Setup Flask-Security
-    shareds.user_datastore = Neo4jUserDatastore(shareds.driver, User, UserProfile, Role)
-    shareds.security = Security(
-        shareds.app,
-        shareds.user_datastore,
-        confirm_register_form=ExtendedConfirmRegisterForm,
-        login_form=ExtendedLoginForm,
-    )
+# Setup Flask-Security
+shareds.user_datastore = Neo4jUserDatastore(shareds.driver, User, UserProfile, Role)
+shareds.security = Security(
+    shareds.app,
+    shareds.user_datastore,
+    confirm_register_form=ExtendedConfirmRegisterForm,
+    login_form=ExtendedLoginForm,
+)
 
 print("Neo4j and security set up")
 
@@ -321,8 +314,7 @@ def _jinja2_filter_date(date_str, fmt=None):
 def _jinja2_filter_datestamp(time_str, fmt=None):
     """ Unix time 1506950049 suodatetaan selväkieliseksi 20.9.2017 """
     try:
-        s = datetime.fromtimestamp(int(time_str)).strftime("%d.%m.%Y %H:%M:%S")
-        return s
+        return datetime.fromtimestamp(int(time_str)).strftime("%d.%m.%Y %H:%M:%S")
     except:
         return time_str
 
@@ -330,11 +322,10 @@ def _jinja2_filter_datestamp(time_str, fmt=None):
 @shareds.app.template_filter("isodatetime")
 def _jinja2_filter_datetime(datetime, fmt=None):
     """ Datetime ISO-muotoon ilman sekunnin osia """
-    if datetime == None:
+    if datetime is None:
         return ""
     try:
-        s = datetime.strftime("%Y-%m-%d %H:%M:%S")
-        return s
+        return datetime.strftime("%Y-%m-%d %H:%M:%S")
     except:
         return "Error"
 

@@ -216,8 +216,7 @@ class UserAdmin:
     @classmethod
     def _getUserProfiles(cls, tx):
         try:
-            profileRecords = [record for record in tx.run(Cypher_adm.user_profiles_get)]
-            return profileRecords
+            return [record for record in tx.run(Cypher_adm.user_profiles_get)]
         except Exception as e:
             logging.error(f"UserAdmin._getUserProfiles: {e.__class__.__name__}, {e}")
             raise
@@ -225,7 +224,7 @@ class UserAdmin:
     @classmethod
     def update_user_language(cls, username, language):
         try:
-            result = (
+            return (
                 shareds.driver.session()
                 .run(
                     Cypher_adm.user_update_language,
@@ -234,7 +233,6 @@ class UserAdmin:
                 )
                 .single()
             )
-            return result
         except ServiceUnavailable as ex:
             logging.debug(ex.message)
             return None
@@ -285,10 +283,10 @@ class UserAdmin:
 
         try:
             logging.debug(f"user update {user.email} {user.name}")
-            if user.username == "master":
-                user.roles = ["master"]
             if user.username == "guest":
                 user.roles = ["guest"]
+            elif user.username == "master":
+                user.roles = ["master"]
             # Identifier and history fields are not to be updated
             result = tx.run(
                 Cypher_adm.user_update,
@@ -307,13 +305,13 @@ class UserAdmin:
                 ]
                 # Delete connections that are not in edited connection list
                 for rolename in prev_roles:
-                    if not rolename in user.roles:
+                    if rolename not in user.roles:
                         tx.run(
                             Cypher_adm.user_role_delete, email=user.email, name=rolename
                         )
                 # Add connections that are not in previous connection list
                 for rolename in user.roles:
-                    if not rolename in prev_roles:
+                    if rolename not in prev_roles:
                         tx.run(
                             Cypher_adm.user_role_add, email=user.email, name=rolename
                         )
@@ -358,12 +356,11 @@ class UserAdmin:
             logger.info(
                 f"-> bp.admin.models.user_admin.UserAdmin.add_access u={username} b={batchid}"
             )
-            rsp = (
+            return (
                 shareds.driver.session()
                 .run(Cypher_adm.add_access, username=username, batchid=batchid)
                 .single()
             )
-            return rsp
         except ServiceUnavailable as ex:
             logging.debug(ex.message)
             return None
@@ -374,12 +371,11 @@ class UserAdmin:
             logger.info(
                 f"-> bp.admin.models.user_admin.UserAdmin.delete_accesses i={idlist}"
             )
-            rsp = (
+            return (
                 shareds.driver.session()
                 .run(Cypher_adm.delete_accesses, idlist=idlist)
                 .single()
             )
-            return rsp
         except ServiceUnavailable as ex:
             logging.debug(ex.message)
             return None

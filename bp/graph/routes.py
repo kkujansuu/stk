@@ -33,8 +33,8 @@ from bp.graph.models.fanchart import FanChart
 @roles_accepted("audit")
 def graph_home(uuid=None):
     uuid = request.args.get("uuid", None)
-    if uuid != None:
-        fanchart = FanChart().get(uuid)
-        return render_template("/graph/layout.html", fanchart_data=json.dumps(fanchart))
-    else:
+    if uuid is None:
         return render_template("/graph/layout.html", fanchart_data="")
+
+    fanchart = FanChart().get(uuid)
+    return render_template("/graph/layout.html", fanchart_data=json.dumps(fanchart))

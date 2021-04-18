@@ -52,18 +52,18 @@ class InfoParser(transformer.Transformation):
     def transform(self, item, options, phase):
         # print(item.path,item.value)
         if item.level == 0:
-            if item.tag == "INDI":
-                self.info.num_individuals += 1
             if item.tag == "FAM":
                 self.info.num_families += 1
-            if item.tag == "NOTE":
+            elif item.tag == "INDI":
+                self.info.num_individuals += 1
+            elif item.tag == "NOTE":
                 self.info.num_notes += 1
-            if item.tag == "SOUR":
-                self.info.num_sources += 1
-            if item.tag == "REPO":
-                self.info.num_repos += 1
-            if item.tag == "OBJE":
+            elif item.tag == "OBJE":
                 self.info.num_multimedia += 1
+            elif item.tag == "REPO":
+                self.info.num_repos += 1
+            elif item.tag == "SOUR":
+                self.info.num_sources += 1
             return None
         xref = None
         if item.path[0] == "@":

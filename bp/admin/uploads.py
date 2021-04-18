@@ -309,7 +309,7 @@ def list_uploads(username):
             elif status == STATUS_REMOVED:
                 status_text = _("REMOVED")
 
-            if not batch_id in batches:
+            if batch_id not in batches:
                 if status_text == _("STORED"):
                     status_text = _("REMOVED")
                 batch_id = ""
@@ -349,8 +349,7 @@ def list_uploads(username):
 
 def list_uploads_all(users):
     for user in users:
-        for upload in list_uploads(user.username):
-            yield upload
+        yield from list_uploads(user.username)
 
 
 # def list_empty_batches(username=None):

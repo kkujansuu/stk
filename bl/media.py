@@ -80,10 +80,7 @@ class Media(NodeObject):
         n.description = node["description"]
         n.src = node["src"]
         n.mime = node["mime"]
-        if n.src:
-            n.name = os.path.split(n.src)[1]
-        else:
-            n.name = ""
+        n.name = os.path.split(n.src)[1] if n.src else ""
         return n
 
 
@@ -101,13 +98,13 @@ class MediaBl(Media):
         self.mime = None
         self.name = ""
 
-    def save(self, tx, **kwargs):  # batch_id=None):
+    def save(self, tx, **kwargs):    # batch_id=None):
         """Saves this new Media object to db.
 
         #TODO: Process also Notes for media?
         #TODO: Use MediaWriteService
         """
-        if not "batch_id" in kwargs:
+        if "batch_id" not in kwargs:
             raise RuntimeError(f"Media.save needs batch_id for parent {self.id}")
 
         self.uuid = self.newUuid()
@@ -121,8 +118,9 @@ class MediaBl(Media):
                 "mime": self.mime,
                 "name": self.name,
                 "description": self.description,
+                "batch_id": kwargs["batch_id"],
             }
-            m_attr["batch_id"] = kwargs["batch_id"]
+
             result = tx.run(
                 CypherMedia.create_in_batch,
                 bid=kwargs["batch_id"],
@@ -204,7 +202,7 @@ class MediaReader(DataService):
                 s = ""
                 if self.obj:
                     if self.next_objs:
-                        s = " ".join([x.id for x in self.next_objs]) + "-> "
+                        s = " ".join(x.id for x in self.next_objs) + "-> "
                     s += f" {self.label} {self.obj.id} -{self.crop}-> (Media)"
                 return s
 

@@ -90,19 +90,16 @@ def readlog(direction="backward", startid=None):
             cypher_stmt = syslog_cypher_read_backward
         else:
             cypher_stmt = syslog_cypher_read_from_end
-    if direction == "forward":
+    elif direction == "forward":
         if startid:
             cypher_stmt = syslog_cypher_read_forward
         else:
             cypher_stmt = syslog_cypher_read_from_beginning
     try:
-        recs = []
         result = shareds.driver.session().run(
             cypher_stmt, direction=direction, startid=startid
         )
-        for record in result:
-            recs.append(record)
-        return recs
+        return [record for record in result]
     except:
         traceback.print_exc()
         return []

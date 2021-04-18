@@ -66,8 +66,7 @@ def run(cypher, callback=None, **kwargs):
 
 def runcypher(cypher, **kwargs):
     print(cypher, kwargs)
-    res = shareds.driver.session().run(cypher, kwargs)
-    return res
+    return shareds.driver.session().run(cypher, kwargs)
 
 
 @app.route("/dbeditor/")

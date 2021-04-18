@@ -38,10 +38,7 @@ class Family(NodeObject):  # -> bl.family.Family
         self.mother_sortname = ""
 
     def __str__(self):
-        if self.rel_type:
-            rel = self.rel_type.lower()
-        else:
-            rel = _("undefined relation")
+        rel = self.rel_type.lower() if self.rel_type else _("undefined relation")
         return "{} {}".format(self.id, rel, self.dates)
 
     @classmethod

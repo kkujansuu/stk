@@ -97,7 +97,7 @@ def process_gedcom(arglist, transform_module):
     gedcom_utils.history_append_args(args)
 
     # You may deny stdout redirect by setting GEDCOM_REDIRECT_SYSOUT=False in config.py
-    if not "GEDCOM_REDIRECT_SYSOUT" in globals():
+    if "GEDCOM_REDIRECT_SYSOUT" not in globals():
         GEDCOM_REDIRECT_SYSOUT = True
     try:
         gedcom_utils.init_log(args.logfile)
@@ -109,11 +109,7 @@ def process_gedcom(arglist, transform_module):
                 saved_stderr = sys.stderr
                 sys.stdout = io.StringIO()
                 sys.stderr = io.StringIO()
-            if args.dryrun:
-                old_name = ""
-            else:
-                old_name = out.new_name
-
+            old_name = "" if args.dryrun else out.new_name
             print(f"<h3>------ {msg} ------</h3>")
             t = transformer.Transformer(
                 transform_module=transform_module,
@@ -135,7 +131,7 @@ def process_gedcom(arglist, transform_module):
                 ).format(num=t.num_changes)
                 + "</b>"
             )
-            # print(_("------ Number of changes: {}").format(t.num_changes))
+                    # print(_("------ Number of changes: {}").format(t.num_changes))
     except:
         traceback.print_exc()
     finally:
@@ -164,10 +160,7 @@ def process_gedcom(arglist, transform_module):
             errors = sys.stderr.getvalue()
             sys.stdout = saved_stdout
             sys.stderr = saved_stderr
-    if old_name:
-        old_basename = os.path.basename(old_name)
-    else:
-        old_basename = ""
+    old_basename = os.path.basename(old_name) if old_name else ""
     if errors and old_basename:
         os.rename(old_name, args.input_gedcom)
         old_basename = ""
@@ -233,13 +226,13 @@ def build_parser(filename, _gedcom, _gedcom_filename):
                 row.classname = "transform_option"
                 if arg.action == "store_true":
                     row.type = "checkbox"
-                    if row.name == "--dryrun":
-                        row.checked = "checked"
                     if row.name == "--display-changes":
                         row.checked = "checked"
                         row.classname = "display_option"
                     elif row.name == "--display_all_unique_places":
                         row.classname = "clear_others"
+                    elif row.name == "--dryrun":
+                        row.checked = "checked"
                 elif arg.action == "store_false":
                     row.type = "checkbox"
                 elif arg.action == "store_const":

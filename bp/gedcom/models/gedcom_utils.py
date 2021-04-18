@@ -222,14 +222,10 @@ def get_transforms():
             doclink = DOC_SERVER + doclink
         t.doclink = doclink
 
-        if hasattr(transformer, "name"):
-            t.displayname = transformer.name
-        else:
-            t.displayname = t.modname
-
+        t.displayname = transformer.name if hasattr(transformer, "name") else t.modname
         t.version = getattr(transformer, "version", "")
         transforms.append(t)
-        # yield t
+            # yield t
     return sorted(transforms, key=lambda t: t.displayname)
 
 

@@ -81,25 +81,6 @@ class DbWriter(DataService):
             self.blog.log_event({"title": _("Database save failed"), "level": "ERROR"})
             return 0
 
-            try:
-                return self.dbdriver.ds_commit()
-                logger.info(
-                    f'-> bp.gramps.xml_dom_handler.DOM_handler.commit/ok f="{self.file}"'
-                )
-                print("Transaction committed")
-                return 0
-            except Exception as e:
-                msg = f"{e.__class__.__name__}, {e}"
-                logger.info('-> bp.gramps.xml_dom_handler.DOM_handler.ds_commit/fail"')
-                print("pe.db_writer.DbWriter.commit: Transaction failed " + msg)
-                self.blog.log_event(
-                    {
-                        "title": _("Database save failed due to {}".format(msg)),
-                        "level": "ERROR",
-                    }
-                )
-                return True
-
 
 #     def save_and_link_obj(self, obj, **kwargs):   # batch_id=None, parent_id=None):
 #         """ Saves given object to database

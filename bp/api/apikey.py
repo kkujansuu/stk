@@ -41,10 +41,7 @@ cypher_save_apikey = """
 
 def is_validkey(apikey):
     result = shareds.driver.session().run(cypher_check_apikey, apikey=apikey).single()
-    if result:
-        return True
-    else:
-        return False
+    return bool(result)
 
 
 def save_apikey(current_user, apikey):
@@ -63,10 +60,7 @@ def get_apikey(current_user):
         .run(cypher_get_apikey, username=current_user.username)
         .single()
     )
-    if result:
-        apikey = result["apikey"]
-    else:
-        apikey = None
+    apikey = result["apikey"] if result else None
     if not apikey:
         apikey = uuid.uuid4().hex
         save_apikey(current_user, apikey)

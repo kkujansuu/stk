@@ -46,10 +46,12 @@ def glob2regexp(glob):
         val = re.sub(r"^!\s*", "", val)
         want_if_match = False
 
-    parts = []
-    for part in re.split("[, ]", val):
-        parts.append(re.escape(part).replace(r"\?", ".").replace(r"\*", ".*?"))
-    val = "|".join([f"(?:{x})" for x in parts])
+    parts = [
+        re.escape(part).replace(r"\?", ".").replace(r"\*", ".*?")
+        for part in re.split("[, ]", val)
+    ]
+
+    val = "|".join(f"(?:{x})" for x in parts)
     val = "^" + val + "\Z"
     # print(f"val = '{val}'")
     try:
@@ -81,8 +83,7 @@ def build_general_stats():
         if stderr:
             print(f"{cmd}: {stderr}")
         output = stdout.decode("utf-8")  # bytes to string
-        lines = [x.rstrip() for x in output.split("\n")]
-        return lines
+        return [x.rstrip() for x in output.split("\n")]
 
     ################
     #

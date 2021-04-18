@@ -41,8 +41,7 @@ def refplace_editor():
 @roles_accepted("audit")
 def list_top_level_places():
     rsp = api.list_top_level_places()
-    response = StkEncoder.jsonify(rsp)
-    return response
+    return StkEncoder.jsonify(rsp)
 
 
 @bp.route("/refplaces/api/list_subordinate_places", methods=["GET"])
@@ -51,8 +50,7 @@ def list_subordinate_places():
     parent_id = request.args.get("parent_id")
     print(parent_id)
     rsp = api.list_subordinate_places(int(parent_id))
-    response = StkEncoder.jsonify(rsp)
-    return response
+    return StkEncoder.jsonify(rsp)
 
 
 @bp.route("/refplaces/api/getplace", methods=["GET"])
@@ -61,8 +59,7 @@ def getplace():
     pid = request.args.get("id")
     rsp = api.getplace(int(pid))
     print(rsp)
-    response = StkEncoder.jsonify(rsp)
-    return response
+    return StkEncoder.jsonify(rsp)
 
 
 @bp.route("/refplaces/api/mergeplaces", methods=["GET"])

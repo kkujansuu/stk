@@ -71,10 +71,7 @@ class Family(NodeObject):
         self.mother_sortname = ""
 
     def __str__(self):
-        if self.rel_type:
-            rel = self.rel_type.lower()
-        else:
-            rel = _("undefined relation")
+        rel = self.rel_type.lower() if self.rel_type else _("undefined relation")
         return "{} {}".format(self.id, rel, self.dates)
 
     @classmethod
@@ -551,25 +548,25 @@ class FamilyReader(DataService):
         """Get all families for given person in marriage date order."""
         res = shareds.dservice.dr_get_person_families_uuid(uuid)
         items = res.get("items")
-        if items:
-            items.sort(key=lambda x: x.dates)
-            # Add translated text fields
-            for family in items:
-                family.rel_type_lang = translate(family.rel_type, "marr").lower()
-                # As_child / As_parent
-                family.role_lang = translate("As_" + family.role, "role")
-                for parent in family.parents:
-                    parent.role_lang = translate(parent.role, "role")
-                for child in family.children:
-                    child.role_lang = translate(child.sex, "child")
-
-            return {"items": items, "status": Status.OK}
-        else:
+        if not items:
             return {
                 "items": [],
                 "status": Status.NOT_FOUND,
                 "statustext": _("This person has no families"),
             }
+
+        items.sort(key=lambda x: x.dates)
+        # Add translated text fields
+        for family in items:
+            family.rel_type_lang = translate(family.rel_type, "marr").lower()
+            # As_child / As_parent
+            family.role_lang = translate("As_" + family.role, "role")
+            for parent in family.parents:
+                parent.role_lang = translate(parent.role, "role")
+            for child in family.children:
+                child.role_lang = translate(child.sex, "child")
+
+        return {"items": items, "status": Status.OK}
 
     # The followind may be obsolete
 
@@ -598,8 +595,7 @@ MATCH (family:Family)-[r:EVENT]->(event)
 RETURN family"""
         result = shareds.driver.session().run(query, pid=event_uniq_id)
         for record in result:
-            f = FamilyBl.from_node(record[0])
-            return f
+            return FamilyBl.from_node(record[0])
         raise LookupError(f"Family {event_uniq_id} not found")
 
     #     @staticmethod

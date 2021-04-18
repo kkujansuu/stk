@@ -60,8 +60,7 @@ class Neo4jWriteService(ConcreteService):
     def dr_update_event(self, uuid, data):
         with self.driver.session(default_access_mode="WRITE") as session:
             statusText = ""
-            attrs = {}
-            attrs["description"] = data["description"]
+            attrs = {"description": data["description"]}
             ok = parsedate(data["date"], attrs)
             if not ok:
                 statusText = "Invalid date"

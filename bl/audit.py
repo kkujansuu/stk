@@ -107,14 +107,14 @@ class Audit:
             # Trick: Set Person as first in sort order!
             if label == "Person":
                 label = " Person"
-            if label and not label in titles:
+            if label and label not in titles:
                 titles.append(label)
 
             key = f"{b.auditor}/{b.user}/{b.id}/{b.updated}"
-            if not key in labels:
+            if key not in labels:
                 labels[key] = {}
             labels[key][label] = cnt
-            # print(f'labels[{key}] {labels[key]}')
+                # print(f'labels[{key}] {labels[key]}')
 
         return sorted(titles), labels
 
@@ -146,7 +146,7 @@ class Audit:
                 else:
                     tstring = ""
             label = record["label"]
-            if label == None:
+            if label is None:
                 label = "-"
             # Trick: Set Person as first in sort order!
             if label == "Person":

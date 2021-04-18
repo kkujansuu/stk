@@ -80,7 +80,7 @@ def load_refnames(pathname):
 
             # Creating Refname
             r = Refname(nimi)
-            if (refname != "") and (refname != nimi):
+            if refname not in ["", nimi]:
                 if reftype in REFTYPES:
                     r.refname = refname
                     r.reftype = reftype

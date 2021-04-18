@@ -63,13 +63,9 @@ class Arg:
         m = re.match(self.regex, s)
         if m:
             text = m.group(1)
-            if self.testfunc:
-                if not self.testfunc(text):
-                    return None
-            if self.valuefunc:
-                value = self.valuefunc(text)
-            else:
-                value = text
+            if self.testfunc and not self.testfunc(text):
+                return None
+            value = self.valuefunc(text) if self.valuefunc else text
             return Match(text, value)
         return None
 
@@ -129,11 +125,10 @@ class Keyword(Arg):
             else:
                 return None
         if not self.case_sensitive:
-            if text.lower() in self.keywords_lower:
-                index = self.keywords_lower.index(text.lower())
-                return Match(self.keywords[index])
-            else:
+            if text.lower() not in self.keywords_lower:
                 return None
+            index = self.keywords_lower.index(text.lower())
+            return Match(self.keywords[index])
         if text in self.keywords:
             return Match(text)
         else:
@@ -166,9 +161,9 @@ def is_name(s):
         return False
     if not is_capitalized(parts[0]):
         return False
-    if len(parts) == 2 and not (is_capitalized(parts[1]) or parts[1].islower()):
-        return False
-    return True
+    return bool(
+        len(parts) != 2 or (is_capitalized(parts[1]) or parts[1].islower())
+    )
 
 
 WORD = Arg("word", RE_WORD)
@@ -337,7 +332,6 @@ class Parser:
                     return Match(tkn)
             return None
         raise RuntimeError(f"unknown arg type: {arg}")
-        return None
 
 
 def test():

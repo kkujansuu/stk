@@ -84,10 +84,7 @@ class Refname:
         """Creating reference name
         The name is saved with first letter capitalized
         """
-        if nimi:
-            self.name = nimi.strip().title()
-        else:
-            self.name = None
+        self.name = nimi.strip().title() if nimi else None
         self.uniq_id = None
 
     def __eq__(self, other):
@@ -242,10 +239,8 @@ class Refname:
         if not name > "":
             logging.warning("Missing name {} for {} - not added".format(reftype, name))
             return
-        if not (reftype in REFTYPES):
+        if reftype not in REFTYPES:
             raise ValueError("Invalid reftype {}".format(reftype))
-            return
-
         try:
             result = tx.run(
                 Cypher_refname.link_person_to, pid=pid, name=name, use=reftype
@@ -397,7 +392,7 @@ class Refname:
                 if rn.usecount > 0:
                     # References from a Person exists
                     for l in result["l_uses"]:
-                        if not l in reftypes:
+                        if l not in reftypes:
                             reftypes.append(l)
                     reftypes.reverse()
                 rn.refname = ", ".join(refnames)

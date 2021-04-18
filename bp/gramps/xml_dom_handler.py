@@ -316,7 +316,7 @@ class DOM_handler:
                     }
                 )
 
-            e.attr = dict()
+            e.attr = {}
             for attr in event.getElementsByTagName("attribute"):
                 if attr.hasAttribute("type"):
                     e.attr[attr.getAttribute("type")] = attr.getAttribute("value")
@@ -419,10 +419,7 @@ class DOM_handler:
                 # Create a tuple (event_handle, role)
                 if ref.hasAttribute("hlink"):
                     e_handle = ref.getAttribute("hlink")
-                    if ref.hasAttribute("role"):
-                        e_role = ref.getAttribute("role")
-                    else:
-                        e_role = None
+                    e_role = ref.getAttribute("role") if ref.hasAttribute("role") else None
                     f.event_handle_roles.append((e_handle, e_role))
 
             for ref in family.getElementsByTagName("childref"):
@@ -540,8 +537,6 @@ class DOM_handler:
 
         # Get details of each person
         for person in people:
-            name_order = 0
-
             p = PersonBl()
             # Extract handle, change and id
             self._extract_base(person, p)
@@ -562,11 +557,9 @@ class DOM_handler:
                     break
                 p.sex = p.sex_from_str(person_gender.childNodes[0].data)
 
-            for person_name in person.getElementsByTagName("name"):
+            for name_order, person_name in enumerate(person.getElementsByTagName("name")):
                 pname = Name()
                 pname.order = name_order
-                name_order += 1
-
                 if person_name.hasAttribute("alt"):
                     pname.alt = person_name.getAttribute("alt")
                 if person_name.hasAttribute("type"):
@@ -659,10 +652,7 @@ class DOM_handler:
                 # Create a tuple (event_handle, role)
                 if ref.hasAttribute("hlink"):
                     e_handle = ref.getAttribute("hlink")
-                    if ref.hasAttribute("role"):
-                        e_role = ref.getAttribute("role")
-                    else:
-                        e_role = None
+                    e_role = ref.getAttribute("role") if ref.hasAttribute("role") else None
                     p.event_handle_roles.append((e_handle, e_role))
 
             # Handle <objref>
@@ -1102,7 +1092,7 @@ class DOM_handler:
         # returns {status, count, statustext}
         status = res.get("status")
         count = res.get("count", 0)
-        if status == Status.OK or status == Status.UPDATED:
+        if status in [Status.OK, Status.UPDATED]:
             self.blog.log_event(
                 {
                     "title": "Confidences set",

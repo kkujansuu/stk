@@ -161,10 +161,7 @@ class Neo4jUserDatastore(UserDatastore):
             user.roles = ["to_be_approved"]
         user.is_active = True
         record = None
-        if user.agree:
-            agreed_at = int(datetime.utcnow().timestamp() * 1000)
-        else:
-            agreed_at = None
+        agreed_at = int(datetime.utcnow().timestamp() * 1000) if user.agree else None
         try:
             logger.info("_put_user new %s %s", user.username, user.roles[0:1])
             result = tx.run(
@@ -218,7 +215,7 @@ class Neo4jUserDatastore(UserDatastore):
             #   Build a list of updated user role names
             for role in user.roles:
                 roleToAdd = role.name if isinstance(role, self.role_model) else role
-                if not roleToAdd in rolelist:
+                if roleToAdd not in rolelist:
                     rolelist.append(roleToAdd)
         try:
             logger.debug("_put_user update" + user.email + " " + user.name)
@@ -250,11 +247,11 @@ class Neo4jUserDatastore(UserDatastore):
             prev_roles = [rolenode.name for rolenode in self.find_UserRoles(user.email)]
             #   Delete connections that are not in edited connection list
             for rolename in prev_roles:
-                if not rolename in rolelist:
+                if rolename not in rolelist:
                     tx.run(Cypher.user_role_delete, email=user.email, name=rolename)
             #   Add connections that are not in previous connection list
             for rolename in rolelist:
-                if not rolename in prev_roles:
+                if rolename not in prev_roles:
                     tx.run(Cypher.user_role_add, email=user.email, name=rolename)
             logger.info("User with email address {} updated".format(user.email))
 
@@ -320,10 +317,7 @@ class Neo4jUserDatastore(UserDatastore):
 
     def _getUsers(self, tx):
         try:
-            userNodes = []
-            for record in tx.run(Cypher.get_users):
-                userNodes.append(record["user"])
-            return userNodes
+            return [record["user"] for record in tx.run(Cypher.get_users)]
         except Exception as e:
             logging.error(f"Neo4jUserDatastore._getUsers: {e.__class__.__name__}, {e}")
             raise

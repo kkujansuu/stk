@@ -330,12 +330,8 @@ def obsolete_read_same_eventday(event_type):
 def obsolete_read_same_name(uniq_id=None):
     """Lukee tietokannasta Person-objektit, joilla on sama nimi, näytettäväksi"""
 
-    ids = []
     result = Name.get_people_with_same_name()
-    for record in result:
-        ids.append(record["ids"])
-
-    return ids
+    return [record["ids"] for record in result]
 
 
 def obsolete_read_sources(uniq_id=None):
@@ -399,9 +395,7 @@ def obsolete_read_families():
     opt = request.args.get("o", "father", type=str)
     count = request.args.get("c", 100, type=int)
 
-    families = Family_combo.get_families(o_context=u_context, opt=opt, limit=count)
-
-    return families
+    return Family_combo.get_families(o_context=u_context, opt=opt, limit=count)
 
 
 def obsolete_read_people_wo_birth():
@@ -427,9 +421,10 @@ def obsolete_read_old_people_top():
     titles, people = Person_combo.get_old_people_top()
 
     sorted_people = sorted(people, key=itemgetter(7), reverse=True)
-    top_of_sorted_people = []
-    for i in range(20 if len(sorted_people) > 19 else len(sorted_people)):
-        top_of_sorted_people.append(sorted_people[i])
+    top_of_sorted_people = [
+        sorted_people[i]
+        for i in range(20 if len(sorted_people) > 19 else len(sorted_people))
+    ]
 
     headings.append(_("Event list"))
     headings.append(_("Showing oldest persons and their age"))

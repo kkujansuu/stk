@@ -30,7 +30,7 @@ def soundex(strval):
         return "Z000"
     prev = strval[0]
     for character in strval[1:]:
-        if character != prev and character != "0":
+        if character not in [prev, "0"]:
             str2 = str2 + character
         prev = character
     # pad with zeros

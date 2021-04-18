@@ -53,7 +53,7 @@ from .models.processor import build_parser, process_gedcom
 def gedcom_list():
     username = gedcom_utils.get_gedcom_user()
     files = gedcom_utils.list_gedcoms(username)
-    allowed_extensions = ",".join(["." + ext for ext in ALLOWED_EXTENSIONS])
+    allowed_extensions = ",".join("." + ext for ext in ALLOWED_EXTENSIONS)
     logger.info(f"-> bp.gedcom.routes.gedcom_list n={len(files)}")
     return render_template(
         "gedcom_list.html",
@@ -315,8 +315,7 @@ def gedcom_analyze(gedcom):
     metadata = gedcom_utils.get_metadata(gedcom)
     encoding = metadata.get("encoding", "utf-8")
     logger.info(f'-> bp.gedcom.routes.gedcom_analyze f="{gedcom}"')
-    rsp = gedcom_utils.analyze(filename, encoding)
-    return rsp
+    return gedcom_utils.analyze(filename, encoding)
 
 
 @bp.route("/gedcom/get_excerpt/<gedcom>/<int:linenum>")
@@ -330,8 +329,7 @@ def get_excerpt(gedcom, linenum):
     firstline = linenum - 1
     while not lines[firstline].startswith("0"):
         firstline -= 1
-    if firstline < 0:
-        firstline = 0
+    firstline = max(firstline, 0)
     html = ""
     for i, line in enumerate(lines[firstline : linenum + 9]):
         line = line.strip()

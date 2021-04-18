@@ -60,7 +60,7 @@ class GedcomRecord(GedcomLine):
         # The name found first, userd for default GIVN, _CALL, NICK
         self.name_default = None
         # Store level 0 line
-        if not type(gedline) is GedcomLine:
+        if type(gedline) is not GedcomLine:
             raise RuntimeError("GedcomLine argument expected")
         self.level = gedline.level
         self.path = gedline.path
@@ -82,7 +82,7 @@ class GedcomRecord(GedcomLine):
             #             print("#record row({}) <= {} (name {!r})".format(len(self.rows), gedline.path, gedline.name), file=stderr)
             self.current_index = len(self.rows)
             self.rows.append(gedline)
-            if gedline.tag == "NAME" and self.name_default == None:
+            if gedline.tag == "NAME" and self.name_default is None:
                 # Save the first NAME occurrence
                 self.name_default = self.get_nameobject()
         else:

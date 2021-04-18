@@ -219,11 +219,7 @@ RETURN  //ID(event) AS id,    event.type AS type,
         Voidaan lukea tapahtuman tiedot lähdeviittauksineen kannasta
         """
 
-        if uniq_id:
-            where = "WHERE ID(event)={} ".format(uniq_id)
-        else:
-            where = ""
-
+        where = "WHERE ID(event)={} ".format(uniq_id) if uniq_id else ""
         query = """
 MATCH (event:Event) -[a:CITATION]-> (citation:Citation) {0}
 RETURN ID(event) AS id, event.type AS type, // event.date AS date, event.dates AS dates, 

@@ -43,10 +43,10 @@ def initialize(_args):
 
 
 def allempty(items):
-    for item in items:
-        if item.tag not in ("CONT", "CONC") or item.value.strip() != "":
-            return False
-    return True
+    return not any(
+        item.tag not in ("CONT", "CONC") or item.value.strip() != ""
+        for item in items
+    )
 
 
 def remove_multiple_blanks(text):

@@ -99,47 +99,49 @@ def initialize_db():
     pe.neo4j.neo4jengine.Neo4jEngine called from app.setups.py
 
     """
-    if not schema_updated():
-        logger.info(
-            "database.accessDB.initialize_db: checking roles, constraints "
-            f"and schema fixes (version {DB_SCHEMA_VERSION})"
-        )
+    if schema_updated():
+        return
 
-        if not roles_exist():
-            create_role_constraints()
-            create_roles()
+    logger.info(
+        "database.accessDB.initialize_db: checking roles, constraints "
+        f"and schema fixes (version {DB_SCHEMA_VERSION})"
+    )
 
-        if not user_exists("master"):
-            create_user_constraints()
-            create_master_user()
+    if not roles_exist():
+        create_role_constraints()
+        create_roles()
 
-        if not user_exists("guest"):
-            create_guest_user()
+    if not user_exists("master"):
+        create_user_constraints()
+        create_master_user()
 
-        if not profile_exists("_Stk_"):
-            create_single_profile("_Stk_")
+    if not user_exists("guest"):
+        create_guest_user()
 
-        create_lock_w_constraint()
+    if not profile_exists("_Stk_"):
+        create_single_profile("_Stk_")
 
-        create_year_indexes()
+    create_lock_w_constraint()
 
-        constr_list = {
-            "Citation": {"uuid"},
-            "Event": {"uuid"},
-            "Family": {"uuid"},
-            "Media": {"uuid"},
-            "Note": {"uuid"},
-            "Person": {"uuid"},
-            "Place": {"uuid"},
-            "Repository": {"uuid"},
-            "Role": {"name"},
-            "Source": {"uuid"},
-            "User": {"email", "username"},
-        }
-        check_constraints(constr_list)
+    create_year_indexes()
 
-        # Fix changed schema
-        do_schema_fixes()
+    constr_list = {
+        "Citation": {"uuid"},
+        "Event": {"uuid"},
+        "Family": {"uuid"},
+        "Media": {"uuid"},
+        "Note": {"uuid"},
+        "Person": {"uuid"},
+        "Place": {"uuid"},
+        "Repository": {"uuid"},
+        "Role": {"name"},
+        "Source": {"uuid"},
+        "User": {"email", "username"},
+    }
+    check_constraints(constr_list)
+
+    # Fix changed schema
+    do_schema_fixes()
 
 
 # --------------  Database Administration -------------
@@ -162,12 +164,10 @@ def schema_updated():
 def roles_exist():
     #  Tarkista roolien olemassaolo
     print(f"Check there exist all {len(ROLES)} user roles")
-    roles_found = []
     results = shareds.driver.session().run(SetupCypher.check_role_count)
-    for result in results:
-        roles_found.append(result[0])
+    roles_found = [result[0] for result in results]
     for i in ROLES:
-        if not i["name"] in roles_found:
+        if i["name"] not in roles_found:
             print(f'role {i.get("name")} not found')
             return False
     return True

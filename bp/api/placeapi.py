@@ -224,7 +224,7 @@ def __process_larger_places(largerPlaces):
                 print(f"urel  {urel[0].values()} ")
                 d1 = urel[0]["date1"] if urel else None
                 d2 = urel[0]["date2"] if urel and urel[0]["date2"] else None
-                dt = urel[0]["datetype"] if urel[0]["datetype"] else None
+                dt = urel[0]["datetype"] or None
             print(largerPlace)
             upper = dict(
                 id=largerPlace["id"],
